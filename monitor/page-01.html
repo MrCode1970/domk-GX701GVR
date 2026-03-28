@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenClaw Monitor — Page 01</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: rgba(18, 24, 45, 0.92);
+      --panel-soft: rgba(25, 34, 61, 0.9);
+      --line: rgba(255,255,255,0.08);
+      --text: #eef2ff;
+      --muted: #9aa6cf;
+      --accent: #78a6ff;
+      --cyan: #67e8f9;
+      --green: #34d399;
+      --amber: #fbbf24;
+      --pink: #f472b6;
+      --violet: #a78bfa;
+      --shadow: 0 12px 36px rgba(0,0,0,.28);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(120,166,255,.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(103,232,249,.10), transparent 24%),
+        linear-gradient(180deg, #09101f 0%, #0f1730 100%);
+    }
+    .wrap { max-width: 1460px; margin: 0 auto; padding: 20px; }
+    .header {
+      display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 18px;
+    }
+    h1 { margin: 0; font-size: 30px; }
+    .sub { color: var(--muted); margin-top: 6px; }
+    .pagebadge {
+      background: var(--panel-soft); border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; color: var(--cyan); font-size: 13px;
+    }
+    .grid-top, .grid-main { display: grid; gap: 14px; }
+    .grid-top { grid-template-columns: repeat(4, 1fr); margin-bottom: 14px; }
+    .grid-main { grid-template-columns: 1.2fr 0.8fr; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .label { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
+    .value { font-size: 30px; font-weight: 700; }
+    .tiny { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .stack { display: grid; gap: 14px; }
+    .sectionTitle { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+    .controls { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .control {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 14px; padding: 10px;
+    }
+    .control label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .control select, .control input {
+      width: 100%; background: #0c1328; color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px;
+    }
+    .toggles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
+    .toggle {
+      display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; font-size: 13px;
+    }
+    .mini-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .proc-list { display: grid; gap: 10px; }
+    .proc-item {
+      padding: 12px; border-radius: 16px; border: 1px solid var(--line); background: rgba(255,255,255,0.03);
+    }
+    .proc-top { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+    .proc-name { font-weight: 700; }
+    .proc-stats { color: var(--muted); font-size: 13px; }
+    .bar {
+      height: 8px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden; margin-top: 8px;
+    }
+    .bar > span { display: block; height: 100%; border-radius: 999px; }
+    .table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .table th, .table td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+    .table th { color: var(--muted); font-weight: 600; }
+    .footerNote { color: var(--muted); font-size: 12px; margin-top: 8px; }
+    @media (max-width: 1150px) {
+      .grid-top { grid-template-columns: repeat(2, 1fr); }
+      .grid-main { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .grid-top, .controls, .mini-grid, .toggles { grid-template-columns: 1fr; }
+      .header { flex-direction: column; align-items: start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div>
+        <h1>OpenClaw Monitor</h1>
+        <div class="sub">Page 01 — clean control dashboard</div>
+      </div>
+      <div class="pagebadge">preview / comparison build</div>
+    </div>
+
+    <div class="grid-top">
+      <div class="card"><div class="label">CPU</div><div class="value" id="cpuNow">—</div><div class="tiny" id="cpuTiny">—</div></div>
+      <div class="card"><div class="label">RAM</div><div class="value" id="memNow">—</div><div class="tiny" id="memTiny">—</div></div>
+      <div class="card"><div class="label">Disk</div><div class="value" id="diskNow">—</div><div class="tiny" id="diskTiny">—</div></div>
+      <div class="card"><div class="label">Updated</div><div class="value" id="updatedNow">—</div><div class="tiny">127.0.0.1:8765 / auto refresh</div></div>
+    </div>
+
+    <div class="grid-main">
+      <div class="stack">
+        <div class="card">
+          <div class="sectionTitle">System overview</div>
+          <canvas id="systemChart" height="120"></canvas>
+          <div class="footerNote">CPU, RAM, Disk на одном таймлайне.</div>
+        </div>
+
+        <div class="card">
+          <div class="sectionTitle">Model / pipeline activity</div>
+          <canvas id="activityChart" height="120"></canvas>
+          <div class="footerNote">Отдельные линии по gateway / STT / node_llama / edge-tts.</div>
+        </div>
+
+        <div class="card">
+          <div class="sectionTitle">Top processes</div>
+          <div class="mini-grid">
+            <div>
+              <div class="label">Top CPU</div>
+              <table class="table" id="topCpuTable"><thead><tr><th>PID</th><th>CPU</th><th>Cmd</th></tr></thead><tbody></tbody></table>
+            </div>
+            <div>
+              <div class="label">Top RAM</div>
+              <table class="table" id="topMemTable"><thead><tr><th>PID</th><th>RAM</th><th>Cmd</th></tr></thead><tbody></tbody></table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <div class="sectionTitle">Display settings</div>
+          <div class="controls">
+            <div class="control">
+              <label>Theme</label>
+              <select><option selected>Midnight Blue</option><option>Graphite</option><option>OLED Black</option></select>
+            </div>
+            <div class="control">
+              <label>Chart type</label>
+              <select><option selected>Line</option><option>Bar</option><option>Area</option></select>
+            </div>
+            <div class="control">
+              <label>History range</label>
+              <select><option>1 min</option><option selected>12 min</option><option>30 min</option></select>
+            </div>
+            <div class="control">
+              <label>Refresh</label>
+              <select><option>1 sec</option><option selected>3 sec</option><option>5 sec</option></select>
+            </div>
+          </div>
+          <div class="toggles">
+            <div class="toggle"><input type="checkbox" checked> CPU</div>
+            <div class="toggle"><input type="checkbox" checked> RAM</div>
+            <div class="toggle"><input type="checkbox" checked> Disk</div>
+            <div class="toggle"><input type="checkbox" checked> STT</div>
+            <div class="toggle"><input type="checkbox" checked> node_llama</div>
+            <div class="toggle"><input type="checkbox" checked> edge-tts</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="sectionTitle">Tracked components</div>
+          <div class="proc-list" id="procList"></div>
+        </div>
+
+        <div class="card">
+          <div class="sectionTitle">Storage footprint</div>
+          <table class="table"><tbody id="sizesTable"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const fmtBytes = (n) => {
+      if (!n && n !== 0) return '—';
+      const units = ['B','KB','MB','GB','TB'];
+      let i = 0, v = n;
+      while (v >= 1024 && i < units.length - 1) { v /= 1024; i++; }
+      return `${v.toFixed(v >= 10 || i === 0 ? 0 : 1)} ${units[i]}`;
+    };
+    const fmtTs = (ts) => new Date(ts * 1000).toLocaleTimeString('ru-RU');
+    const shortCmd = (s) => (s || '').length > 42 ? s.slice(0, 42) + '…' : (s || '');
+    const colors = {
+      cpu: '#78a6ff', ram: '#67e8f9', disk: '#fbbf24',
+      gateway: '#34d399', stt: '#f472b6', llama: '#a78bfa', tts: '#fb7185'
+    };
+
+    const chartBase = {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#eef2ff' } } },
+      scales: {
+        x: { ticks: { color: '#9aa6cf' }, grid: { color: 'rgba(255,255,255,.05)' } },
+        y: { ticks: { color: '#9aa6cf' }, grid: { color: 'rgba(255,255,255,.05)' }, beginAtZero: true }
+      }
+    };
+
+    const systemChart = new Chart(document.getElementById('systemChart'), {
+      type: 'line',
+      data: { labels: [], datasets: [
+        { label: 'CPU %', data: [], borderColor: colors.cpu, backgroundColor: 'rgba(120,166,255,.16)', tension: .28, fill: true },
+        { label: 'RAM %', data: [], borderColor: colors.ram, backgroundColor: 'rgba(103,232,249,.08)', tension: .28, fill: true },
+        { label: 'Disk %', data: [], borderColor: colors.disk, backgroundColor: 'rgba(251,191,36,.05)', tension: .28, fill: false }
+      ]},
+      options: chartBase
+    });
+
+    const activityChart = new Chart(document.getElementById('activityChart'), {
+      type: 'line',
+      data: { labels: [], datasets: [
+        { label: 'openclaw_gateway', data: [], borderColor: colors.gateway, tension: .28 },
+        { label: 'python_stt', data: [], borderColor: colors.stt, tension: .28 },
+        { label: 'node_llama', data: [], borderColor: colors.llama, tension: .28 },
+        { label: 'edge_tts', data: [], borderColor: colors.tts, tension: .28 }
+      ]},
+      options: chartBase
+    });
+
+    function renderTopTable(id, rows, metricKey, metricLabel) {
+      const body = document.querySelector(`#${id} tbody`);
+      body.innerHTML = '';
+      for (const row of rows.slice(0, 6)) {
+        const tr = document.createElement('tr');
+        const metric = metricKey === 'rss_kb' ? `${(row.rss_kb / 1024).toFixed(0)} MB` : row[metricKey];
+        tr.innerHTML = `<td>${row.pid}</td><td>${metric}</td><td>${shortCmd(row.args)}</td>`;
+        body.appendChild(tr);
+      }
+    }
+
+    function renderProcList(groups) {
+      const host = document.getElementById('procList');
+      host.innerHTML = '';
+      const palette = [colors.gateway, colors.stt, colors.llama, colors.tts];
+      Object.entries(groups).forEach(([name, info], idx) => {
+        const div = document.createElement('div');
+        const color = palette[idx % palette.length];
+        const cpuWidth = Math.min(info.cpu_percent || 0, 100);
+        div.className = 'proc-item';
+        div.innerHTML = `
+          <div class="proc-top">
+            <div>
+              <div class="proc-name">${name}</div>
+              <div class="proc-stats">count: ${info.count} · pids: ${(info.pids || []).join(', ') || '—'}</div>
+            </div>
+            <div class="proc-stats">CPU ${info.cpu_percent}% · RAM ${info.mem_percent}% · RSS ${info.rss_mb} MB</div>
+          </div>
+          <div class="bar"><span style="width:${cpuWidth}%;background:${color}"></span></div>
+        `;
+        host.appendChild(div);
+      });
+    }
+
+    function renderSizes(sizes) {
+      const body = document.getElementById('sizesTable');
+      body.innerHTML = '';
+      Object.entries(sizes || {}).forEach(([key, value]) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<th>${key}</th><td>${fmtBytes(value)}</td>`;
+        body.appendChild(tr);
+      });
+    }
+
+    async function refresh() {
+      const history = await fetch('./history.json', { cache: 'no-store' }).then(r => r.json());
+      const latest = history[history.length - 1];
+      if (!latest) return;
+
+      document.getElementById('cpuNow').textContent = `${latest.cpu.percent ?? 0}%`;
+      document.getElementById('cpuTiny').textContent = `load: ${latest.loadavg['1m']} / ${latest.loadavg['5m']} / ${latest.loadavg['15m']}`;
+      document.getElementById('memNow').textContent = `${latest.memory.percent}%`;
+      document.getElementById('memTiny').textContent = `${fmtBytes(latest.memory.used)} / ${fmtBytes(latest.memory.total)}`;
+      document.getElementById('diskNow').textContent = `${latest.disk.percent}%`;
+      document.getElementById('diskTiny').textContent = `${fmtBytes(latest.disk.used)} / ${fmtBytes(latest.disk.total)}`;
+      document.getElementById('updatedNow').textContent = fmtTs(latest.timestamp);
+
+      const labels = history.map(h => fmtTs(h.timestamp));
+      systemChart.data.labels = labels;
+      systemChart.data.datasets[0].data = history.map(h => h.cpu.percent ?? 0);
+      systemChart.data.datasets[1].data = history.map(h => h.memory.percent ?? 0);
+      systemChart.data.datasets[2].data = history.map(h => h.disk.percent ?? 0);
+      systemChart.update();
+
+      activityChart.data.labels = labels;
+      activityChart.data.datasets[0].data = history.map(h => h.process_groups.openclaw_gateway.cpu_percent || 0);
+      activityChart.data.datasets[1].data = history.map(h => h.process_groups.python_stt.cpu_percent || 0);
+      activityChart.data.datasets[2].data = history.map(h => h.process_groups.node_llama.cpu_percent || 0);
+      activityChart.data.datasets[3].data = history.map(h => h.process_groups.edge_tts.cpu_percent || 0);
+      activityChart.update();
+
+      renderTopTable('topCpuTable', latest.top_cpu || [], 'pcpu', 'CPU');
+      renderTopTable('topMemTable', latest.top_mem || [], 'rss_kb', 'RAM');
+      renderProcList(latest.process_groups || {});
+      renderSizes(latest.sizes || {});
+    }
+
+    refresh().catch(console.error);
+    setInterval(() => refresh().catch(console.error), 3000);
+  </script>
+</body>
+</html>
