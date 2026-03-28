@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenClaw Monitor — Page 02</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #070b14;
+      --panel: #0d1322;
+      --panel2: #111a2f;
+      --line: rgba(148,163,184,.16);
+      --text: #edf3ff;
+      --muted: #8ea0c9;
+      --accent: #5eead4;
+      --blue: #60a5fa;
+      --purple: #a78bfa;
+      --pink: #f472b6;
+      --green: #34d399;
+      --amber: #f59e0b;
+      --red: #fb7185;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: Inter, system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(94,234,212,.08), transparent 22%),
+        radial-gradient(circle at 90% 15%, rgba(96,165,250,.08), transparent 20%),
+        linear-gradient(180deg, #060912 0%, #0a1020 100%);
+    }
+    .wrap { max-width: 1500px; margin: 0 auto; padding: 22px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 14px; }
+    h1 { margin: 0; font-size: 30px; }
+    .sub { color: var(--muted); margin-top: 6px; }
+    .pill { border: 1px solid var(--line); background: rgba(255,255,255,.03); color: var(--accent); border-radius: 999px; padding: 8px 12px; font-size: 13px; }
+    .main {
+      display: grid;
+      grid-template-columns: 1.4fr 0.8fr;
+      gap: 16px;
+    }
+    .stack { display: grid; gap: 16px; }
+    .card {
+      background: linear-gradient(180deg, rgba(13,19,34,.98), rgba(10,15,28,.98));
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: 0 14px 38px rgba(0,0,0,.32);
+    }
+    .title { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+    .node {
+      position: relative;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: 18px;
+      padding: 14px;
+      min-height: 132px;
+    }
+    .node:not(:last-child)::after {
+      content: '→';
+      position: absolute;
+      right: -11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 22px;
+      z-index: 2;
+    }
+    .nodeHead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .nodeName { font-weight: 700; }
+    .statusDot { width: 10px; height: 10px; border-radius: 999px; background: var(--green); box-shadow: 0 0 12px rgba(52,211,153,.7); }
+    .metric { font-size: 24px; font-weight: 700; }
+    .meta { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .kpiGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .kpi { border: 1px solid var(--line); border-radius: 18px; padding: 14px; background: rgba(255,255,255,.03); }
+    .kpi .label { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+    .kpi .value { font-size: 26px; font-weight: 700; }
+    .small { color: var(--muted); font-size: 12px; margin-top: 6px; }
+    .settings { display: grid; gap: 10px; }
+    .setting {
+      display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center;
+      border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; background: rgba(255,255,255,.03);
+    }
+    .setting strong { display: block; font-size: 14px; }
+    .setting span { color: var(--muted); font-size: 12px; }
+    .badge {
+      background: var(--panel2); border: 1px solid var(--line); border-radius: 999px; padding: 6px 10px; color: var(--accent); font-size: 12px;
+    }
+    .logList { display: grid; gap: 10px; }
+    .logItem {
+      border-left: 3px solid var(--accent); padding: 10px 12px; background: rgba(255,255,255,.03); border-radius: 0 12px 12px 0;
+    }
+    .logItem .time { color: var(--muted); font-size: 12px; }
+    .table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .table th, .table td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+    .table th { color: var(--muted); font-weight: 600; }
+    @media (max-width: 1220px) {
+      .main { grid-template-columns: 1fr; }
+      .pipeline { grid-template-columns: 1fr 1fr; }
+      .node::after { display: none; }
+      .kpiGrid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 760px) {
+      .pipeline, .kpiGrid { grid-template-columns: 1fr; }
+      .header { flex-direction: column; align-items: start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div>
+        <h1>OpenClaw Monitor</h1>
+        <div class="sub">Page 02 — audio pipeline dashboard</div>
+      </div>
+      <div class="pill">voice / STT / memory / reply flow</div>
+    </div>
+
+    <div class="main">
+      <div class="stack">
+        <div class="card">
+          <div class="title">Pipeline overview</div>
+          <div class="pipeline" id="pipelineNodes"></div>
+        </div>
+
+        <div class="card">
+          <div class="title">System + GPU timeline</div>
+          <canvas id="systemChart" height="110"></canvas>
+        </div>
+
+        <div class="card">
+          <div class="title">Component activity</div>
+          <canvas id="activityChart" height="110"></canvas>
+        </div>
+
+        <div class="card">
+          <div class="title">Top processes</div>
+          <table class="table" id="topTable">
+            <thead><tr><th>PID</th><th>CPU %</th><th>RAM MB</th><th>Command</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <div class="title">Live KPIs</div>
+          <div class="kpiGrid">
+            <div class="kpi"><div class="label">CPU</div><div class="value" id="cpuNow">—</div><div class="small" id="loadNow">—</div></div>
+            <div class="kpi"><div class="label">GPU</div><div class="value" id="gpuNow">—</div><div class="small" id="gpuNowSmall">—</div></div>
+            <div class="kpi"><div class="label">RAM</div><div class="value" id="memNow">—</div><div class="small" id="memNowSmall">—</div></div>
+            <div class="kpi"><div class="label">Updated</div><div class="value" id="updatedNow">—</div><div class="small">refresh 3s</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="title">Display settings</div>
+          <div class="settings">
+            <div class="setting"><div><strong>Layout mode</strong><span>Audio-first monitoring</span></div><div class="badge">pipeline</div></div>
+            <div class="setting"><div><strong>History range</strong><span>Short rolling window for debugging</span></div><div class="badge">12 min</div></div>
+            <div class="setting"><div><strong>Metrics shown</strong><span>CPU / GPU / RAM / STT / gateway / TTS</span></div><div class="badge">6 series</div></div>
+            <div class="setting"><div><strong>Noise</strong><span>Focus on active pipeline components</span></div><div class="badge">low</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="title">Suggested event log</div>
+          <div class="logList" id="logList"></div>
+        </div>
+
+        <div class="card">
+          <div class="title">Storage / caches</div>
+          <table class="table"><tbody id="sizesTable"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const fmtBytes = (n) => {
+      if (!n && n !== 0) return '—';
+      const units = ['B','KB','MB','GB','TB'];
+      let i = 0, v = n;
+      while (v >= 1024 && i < units.length - 1) { v /= 1024; i++; }
+      return `${v.toFixed(v >= 10 || i === 0 ? 0 : 1)} ${units[i]}`;
+    };
+    const fmtTs = (ts) => new Date(ts * 1000).toLocaleTimeString('ru-RU');
+    const shortCmd = (s) => (s || '').length > 56 ? s.slice(0, 56) + '…' : (s || '');
+
+    const chartBase = {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#edf3ff' } } },
+      scales: {
+        x: { ticks: { color: '#8ea0c9' }, grid: { color: 'rgba(148,163,184,.08)' } },
+        y: { ticks: { color: '#8ea0c9' }, grid: { color: 'rgba(148,163,184,.08)' }, beginAtZero: true }
+      }
+    };
+
+    const systemChart = new Chart(document.getElementById('systemChart'), {
+      type: 'line',
+      data: { labels: [], datasets: [
+        { label: 'CPU %', data: [], borderColor: '#60a5fa', tension: .25 },
+        { label: 'GPU %', data: [], borderColor: '#34d399', tension: .25 },
+        { label: 'VRAM %', data: [], borderColor: '#f59e0b', tension: .25 },
+        { label: 'RAM %', data: [], borderColor: '#a78bfa', tension: .25 }
+      ]},
+      options: chartBase
+    });
+
+    const activityChart = new Chart(document.getElementById('activityChart'), {
+      type: 'bar',
+      data: { labels: [], datasets: [
+        { label: 'gateway', data: [], backgroundColor: 'rgba(94,234,212,.65)' },
+        { label: 'python_stt', data: [], backgroundColor: 'rgba(244,114,182,.65)' },
+        { label: 'node_llama', data: [], backgroundColor: 'rgba(167,139,250,.65)' },
+        { label: 'edge_tts', data: [], backgroundColor: 'rgba(251,113,133,.65)' }
+      ]},
+      options: chartBase
+    });
+
+    function pipelineData(latest) {
+      const gpu = latest.gpu || {};
+      return [
+        { name: 'Audio Input', value: 'Voice msg', meta: `updated ${fmtTs(latest.timestamp)}`, color: '#60a5fa' },
+        { name: 'Whisper STT', value: `${latest.process_groups.python_stt.cpu_percent || 0}% CPU`, meta: `RAM ${latest.process_groups.python_stt.rss_mb || 0} MB`, color: '#f472b6' },
+        { name: 'OpenClaw', value: `${latest.process_groups.openclaw_gateway.cpu_percent || 0}% CPU`, meta: `RAM ${latest.process_groups.openclaw_gateway.rss_mb || 0} MB`, color: '#5eead4' },
+        { name: 'Memory', value: `${latest.process_groups.node_llama.cpu_percent || 0}% CPU`, meta: `cache ${fmtBytes((latest.sizes || {}).openclaw_cache || 0)}`, color: '#a78bfa' },
+        { name: 'Reply / TTS', value: `${latest.process_groups.edge_tts.cpu_percent || 0}% CPU`, meta: gpu.name ? `${gpu.name} · ${gpu.utilization_gpu || 0}% GPU` : 'GPU n/a', color: '#34d399' },
+      ];
+    }
+
+    function renderPipeline(latest) {
+      const host = document.getElementById('pipelineNodes');
+      host.innerHTML = '';
+      for (const item of pipelineData(latest)) {
+        const div = document.createElement('div');
+        div.className = 'node';
+        div.innerHTML = `
+          <div class="nodeHead">
+            <div class="nodeName">${item.name}</div>
+            <div class="statusDot" style="background:${item.color};box-shadow:0 0 12px ${item.color}88"></div>
+          </div>
+          <div class="metric">${item.value}</div>
+          <div class="meta">${item.meta}</div>
+        `;
+        host.appendChild(div);
+      }
+    }
+
+    function renderTop(latest) {
+      const body = document.querySelector('#topTable tbody');
+      body.innerHTML = '';
+      for (const row of (latest.top_cpu || []).slice(0, 8)) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${row.pid}</td><td>${row.pcpu}</td><td>${(row.rss_kb/1024).toFixed(0)}</td><td>${shortCmd(row.args)}</td>`;
+        body.appendChild(tr);
+      }
+    }
+
+    function renderSizes(sizes) {
+      const body = document.getElementById('sizesTable');
+      body.innerHTML = '';
+      Object.entries(sizes || {}).forEach(([key, value]) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<th>${key}</th><td>${fmtBytes(value)}</td>`;
+        body.appendChild(tr);
+      });
+    }
+
+    function renderLog(latest) {
+      const host = document.getElementById('logList');
+      const g = latest.process_groups || {};
+      const items = [
+        { text: `Audio pipeline ready; STT cpu ${g.python_stt?.cpu_percent || 0}%`, time: fmtTs(latest.timestamp), color: '#f472b6' },
+        { text: `Gateway active; cpu ${g.openclaw_gateway?.cpu_percent || 0}% · rss ${g.openclaw_gateway?.rss_mb || 0} MB`, time: fmtTs(latest.timestamp), color: '#5eead4' },
+        { text: latest.gpu ? `GPU ${latest.gpu.name}; ${latest.gpu.utilization_gpu}% util · ${latest.gpu.temperature_c}°C` : 'GPU metrics unavailable', time: fmtTs(latest.timestamp), color: '#34d399' },
+        { text: `Memory cache footprint ${fmtBytes((latest.sizes || {}).openclaw_cache || 0)}`, time: fmtTs(latest.timestamp), color: '#a78bfa' },
+      ];
+      host.innerHTML = '';
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'logItem';
+        div.style.borderLeftColor = item.color;
+        div.innerHTML = `<div>${item.text}</div><div class="time">${item.time}</div>`;
+        host.appendChild(div);
+      });
+    }
+
+    async function refresh() {
+      const history = await fetch('./history.json', { cache: 'no-store' }).then(r => r.json());
+      const latest = history[history.length - 1];
+      if (!latest) return;
+
+      document.getElementById('cpuNow').textContent = `${latest.cpu.percent ?? 0}%`;
+      document.getElementById('loadNow').textContent = `load ${latest.loadavg['1m']} / ${latest.loadavg['5m']} / ${latest.loadavg['15m']}`;
+      document.getElementById('memNow').textContent = `${latest.memory.percent}%`;
+      document.getElementById('memNowSmall').textContent = `${fmtBytes(latest.memory.used)} / ${fmtBytes(latest.memory.total)}`;
+      document.getElementById('updatedNow').textContent = fmtTs(latest.timestamp);
+      if (latest.gpu) {
+        document.getElementById('gpuNow').textContent = `${latest.gpu.utilization_gpu}%`;
+        document.getElementById('gpuNowSmall').textContent = `VRAM ${latest.gpu.memory_used_mb}/${latest.gpu.memory_total_mb} MB · ${latest.gpu.temperature_c}°C`;
+      } else {
+        document.getElementById('gpuNow').textContent = '—';
+        document.getElementById('gpuNowSmall').textContent = 'GPU n/a';
+      }
+
+      const labels = history.map(h => fmtTs(h.timestamp));
+      systemChart.data.labels = labels;
+      systemChart.data.datasets[0].data = history.map(h => h.cpu.percent ?? 0);
+      systemChart.data.datasets[1].data = history.map(h => (h.gpu && h.gpu.utilization_gpu) ?? 0);
+      systemChart.data.datasets[2].data = history.map(h => {
+        if (!h.gpu || !h.gpu.memory_total_mb) return 0;
+        return +(100 * h.gpu.memory_used_mb / h.gpu.memory_total_mb).toFixed(2);
+      });
+      systemChart.data.datasets[3].data = history.map(h => h.memory.percent ?? 0);
+      systemChart.update();
+
+      activityChart.data.labels = labels.slice(-20);
+      activityChart.data.datasets[0].data = history.slice(-20).map(h => h.process_groups.openclaw_gateway.cpu_percent || 0);
+      activityChart.data.datasets[1].data = history.slice(-20).map(h => h.process_groups.python_stt.cpu_percent || 0);
+      activityChart.data.datasets[2].data = history.slice(-20).map(h => h.process_groups.node_llama.cpu_percent || 0);
+      activityChart.data.datasets[3].data = history.slice(-20).map(h => h.process_groups.edge_tts.cpu_percent || 0);
+      activityChart.update();
+
+      renderPipeline(latest);
+      renderTop(latest);
+      renderSizes(latest.sizes || {});
+      renderLog(latest);
+    }
+
+    refresh().catch(console.error);
+    setInterval(() => refresh().catch(console.error), 3000);
+  </script>
+</body>
+</html>
