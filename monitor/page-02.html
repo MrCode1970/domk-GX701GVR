@@ -137,6 +137,11 @@
         </div>
 
         <div class="card">
+          <div class="title">Temperature timeline</div>
+          <canvas id="tempChart" height="100"></canvas>
+        </div>
+
+        <div class="card">
           <div class="title">Component activity</div>
           <canvas id="activityChart" height="110"></canvas>
         </div>
@@ -167,7 +172,18 @@
             <div class="setting"><div><strong>Layout mode</strong><span>Audio-first monitoring</span></div><div class="badge">pipeline</div></div>
             <div class="setting"><div><strong>History range</strong><span>Short rolling window for debugging</span></div><div class="badge">12 min</div></div>
             <div class="setting"><div><strong>Metrics shown</strong><span>CPU / GPU / RAM / STT / gateway / TTS</span></div><div class="badge">6 series</div></div>
-            <div class="setting"><div><strong>Noise</strong><span>Focus on active pipeline components</span></div><div class="badge">low</div></div>
+            <div class="setting"><div><strong>Temperature</strong><span>GPU temp + synthetic system temp</span></div><div class="badge">enabled</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="title">Model / component filter</div>
+          <div class="settings" id="filterBox">
+            <label class="setting"><div><strong>Audio Input</strong><span>Voice message ingest</span></div><input type="checkbox" data-filter="Audio Input" checked></label>
+            <label class="setting"><div><strong>Whisper STT</strong><span>faster-whisper transcription</span></div><input type="checkbox" data-filter="Whisper STT" checked></label>
+            <label class="setting"><div><strong>OpenClaw</strong><span>main assistant runtime</span></div><input type="checkbox" data-filter="OpenClaw" checked></label>
+            <label class="setting"><div><strong>Memory</strong><span>node-llama-cpp / embeddings</span></div><input type="checkbox" data-filter="Memory" checked></label>
+            <label class="setting"><div><strong>Reply / TTS</strong><span>edge-tts output</span></div><input type="checkbox" data-filter="Reply / TTS" checked></label>
           </div>
         </div>
 
@@ -215,6 +231,15 @@
       options: chartBase
     });
 
+    const tempChart = new Chart(document.getElementById('tempChart'), {
+      type: 'line',
+      data: { labels: [], datasets: [
+        { label: 'GPU temp °C', data: [], borderColor: '#f59e0b', tension: .25 },
+        { label: 'System temp proxy °C', data: [], borderColor: '#fb7185', tension: .25 }
+      ]},
+      options: chartBase
+    });
+
     const activityChart = new Chart(document.getElementById('activityChart'), {
       type: 'bar',
       data: { labels: [], datasets: [
@@ -237,10 +262,16 @@
       ];
     }
 
+    function selectedFilters() {
+      return new Set(Array.from(document.querySelectorAll('#filterBox input[data-filter]:checked')).map(el => el.dataset.filter));
+    }
+
     function renderPipeline(latest) {
       const host = document.getElementById('pipelineNodes');
       host.innerHTML = '';
+      const filters = selectedFilters();
       for (const item of pipelineData(latest)) {
+        if (!filters.has(item.name)) continue;
         const div = document.createElement('div');
         div.className = 'node';
         div.innerHTML = `
@@ -323,6 +354,14 @@
       systemChart.data.datasets[3].data = history.map(h => h.memory.percent ?? 0);
       systemChart.update();
 
+      tempChart.data.labels = labels;
+      tempChart.data.datasets[0].data = history.map(h => (h.gpu && h.gpu.temperature_c) ?? 0);
+      tempChart.data.datasets[1].data = history.map(h => {
+        const cpu = h.cpu.percent ?? 0;
+        return +(38 + cpu * 0.35).toFixed(2);
+      });
+      tempChart.update();
+
       activityChart.data.labels = labels.slice(-20);
       activityChart.data.datasets[0].data = history.slice(-20).map(h => h.process_groups.openclaw_gateway.cpu_percent || 0);
       activityChart.data.datasets[1].data = history.slice(-20).map(h => h.process_groups.python_stt.cpu_percent || 0);
@@ -335,6 +374,10 @@
       renderSizes(latest.sizes || {});
       renderLog(latest);
     }
+
+    document.querySelectorAll('#filterBox input[data-filter]').forEach(el => {
+      el.addEventListener('change', () => refresh().catch(console.error));
+    });
 
     refresh().catch(console.error);
     setInterval(() => refresh().catch(console.error), 3000);
