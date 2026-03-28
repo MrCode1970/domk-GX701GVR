@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenClaw Local Monitor</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #0f1220;
+      --panel: #171b2e;
+      --panel2: #1e2440;
+      --text: #e8ecff;
+      --muted: #9ba6d3;
+      --accent: #7aa2ff;
+      --accent2: #67e8f9;
+      --good: #22c55e;
+      --warn: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: linear-gradient(180deg, #0c1020 0%, #141933 100%);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 { margin: 0 0 6px; font-size: 28px; }
+    .sub { color: var(--muted); margin-bottom: 18px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .card {
+      background: rgba(23, 27, 46, 0.95);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    }
+    .label { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+    .value { font-size: 28px; font-weight: 700; }
+    .tiny { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .charts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .wide { grid-column: 1 / -1; }
+    .table {
+      width: 100%; border-collapse: collapse; font-size: 14px;
+    }
+    .table th, .table td {
+      padding: 8px 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .table th { color: var(--muted); font-weight: 600; }
+    .badge { display: inline-block; padding: 4px 8px; border-radius: 999px; background: var(--panel2); color: var(--accent2); font-size: 12px; }
+    @media (max-width: 900px) { .charts { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>OpenClaw Local Monitor</h1>
+    <div class="sub">Живые графики по CPU, RAM, диску и процессам OpenClaw / STT / memory.</div>
+
+    <div class="grid">
+      <div class="card"><div class="label">CPU</div><div class="value" id="cpuNow">—</div><div class="tiny" id="loadAvg">—</div></div>
+      <div class="card"><div class="label">RAM</div><div class="value" id="memNow">—</div><div class="tiny" id="memDetail">—</div></div>
+      <div class="card"><div class="label">Диск ~/.openclaw</div><div class="value" id="diskNow">—</div><div class="tiny" id="diskDetail">—</div></div>
+      <div class="card"><div class="label">Последнее обновление</div><div class="value" id="updated">—</div><div class="tiny"><span class="badge">auto refresh 3s</span></div></div>
+    </div>
+
+    <div class="charts">
+      <div class="card"><canvas id="mainChart" height="130"></canvas></div>
+      <div class="card"><canvas id="procChart" height="130"></canvas></div>
+      <div class="card wide">
+        <div class="label">Tracked process groups</div>
+        <table class="table" id="procTable">
+          <thead><tr><th>Группа</th><th>CPU %</th><th>RAM %</th><th>RSS MB</th><th>Count</th><th>PIDs</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="label">Top CPU</div>
+        <table class="table" id="topCpuTable"><thead><tr><th>PID</th><th>CPU %</th><th>RSS MB</th><th>Command</th></tr></thead><tbody></tbody></table>
+      </div>
+      <div class="card">
+        <div class="label">Top RAM</div>
+        <table class="table" id="topMemTable"><thead><tr><th>PID</th><th>RAM %</th><th>RSS MB</th><th>Command</th></tr></thead><tbody></tbody></table>
+      </div>
+      <div class="card wide">
+        <div class="label">Размеры данных</div>
+        <table class="table"><tbody id="sizesTable"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const fmtBytes = (n) => {
+      if (!n && n !== 0) return '—';
+      const units = ['B','KB','MB','GB','TB'];
+      let i = 0, v = n;
+      while (v >= 1024 && i < units.length - 1) { v /= 1024; i++; }
+      return `${v.toFixed(v >= 10 || i === 0 ? 0 : 1)} ${units[i]}`;
+    };
+    const fmtTs = (ts) => new Date(ts * 1000).toLocaleTimeString('ru-RU');
+    const shortCmd = (s) => (s || '').length > 80 ? s.slice(0, 80) + '…' : (s || '');
+
+    const mainChart = new Chart(document.getElementById('mainChart'), {
+      type: 'line',
+      data: { labels: [], datasets: [
+        { label: 'CPU %', data: [], borderColor: '#7aa2ff', backgroundColor: 'rgba(122,162,255,.15)', tension: .25 },
+        { label: 'RAM %', data: [], borderColor: '#67e8f9', backgroundColor: 'rgba(103,232,249,.15)', tension: .25 },
+        { label: 'Disk %', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,.10)', tension: .25 }
+      ]},
+      options: { responsive: true, plugins: { legend: { labels: { color: '#e8ecff' } } }, scales: { x: { ticks: { color: '#9ba6d3' } }, y: { ticks: { color: '#9ba6d3' }, beginAtZero: true, max: 100 } } }
+    });
+
+    const procChart = new Chart(document.getElementById('procChart'), {
+      type: 'line',
+      data: { labels: [], datasets: [
+        { label: 'openclaw_gateway CPU %', data: [], borderColor: '#22c55e', tension: .25 },
+        { label: 'python_stt CPU %', data: [], borderColor: '#ef4444', tension: .25 },
+        { label: 'node_llama CPU %', data: [], borderColor: '#a78bfa', tension: .25 },
+        { label: 'edge_tts CPU %', data: [], borderColor: '#f472b6', tension: .25 }
+      ]},
+      options: { responsive: true, plugins: { legend: { labels: { color: '#e8ecff' } } }, scales: { x: { ticks: { color: '#9ba6d3' } }, y: { ticks: { color: '#9ba6d3' }, beginAtZero: true } } }
+    });
+
+    async function refresh() {
+      const history = await fetch('./history.json', { cache: 'no-store' }).then(r => r.json());
+      const latest = history[history.length - 1];
+      if (!latest) return;
+
+      document.getElementById('cpuNow').textContent = `${latest.cpu.percent ?? 0}%`;
+      document.getElementById('loadAvg').textContent = `load: ${latest.loadavg['1m']} / ${latest.loadavg['5m']} / ${latest.loadavg['15m']}`;
+      document.getElementById('memNow').textContent = `${latest.memory.percent}%`;
+      document.getElementById('memDetail').textContent = `${fmtBytes(latest.memory.used)} / ${fmtBytes(latest.memory.total)}`;
+      document.getElementById('diskNow').textContent = `${latest.disk.percent}%`;
+      document.getElementById('diskDetail').textContent = `${fmtBytes(latest.disk.used)} / ${fmtBytes(latest.disk.total)}`;
+      document.getElementById('updated').textContent = fmtTs(latest.timestamp);
+
+      const labels = history.map(h => fmtTs(h.timestamp));
+      mainChart.data.labels = labels;
+      mainChart.data.datasets[0].data = history.map(h => h.cpu.percent ?? 0);
+      mainChart.data.datasets[1].data = history.map(h => h.memory.percent ?? 0);
+      mainChart.data.datasets[2].data = history.map(h => h.disk.percent ?? 0);
+      mainChart.update();
+
+      procChart.data.labels = labels;
+      procChart.data.datasets[0].data = history.map(h => h.process_groups.openclaw_gateway.cpu_percent || 0);
+      procChart.data.datasets[1].data = history.map(h => h.process_groups.python_stt.cpu_percent || 0);
+      procChart.data.datasets[2].data = history.map(h => h.process_groups.node_llama.cpu_percent || 0);
+      procChart.data.datasets[3].data = history.map(h => h.process_groups.edge_tts.cpu_percent || 0);
+      procChart.update();
+
+      const procBody = document.querySelector('#procTable tbody');
+      procBody.innerHTML = '';
+      for (const [name, info] of Object.entries(latest.process_groups)) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${name}</td><td>${info.cpu_percent}</td><td>${info.mem_percent}</td><td>${info.rss_mb}</td><td>${info.count}</td><td>${(info.pids || []).join(', ')}</td>`;
+        procBody.appendChild(tr);
+      }
+
+      const topCpuBody = document.querySelector('#topCpuTable tbody');
+      topCpuBody.innerHTML = '';
+      for (const row of latest.top_cpu || []) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${row.pid}</td><td>${row.pcpu}</td><td>${(row.rss_kb/1024).toFixed(1)}</td><td>${shortCmd(row.args)}</td>`;
+        topCpuBody.appendChild(tr);
+      }
+
+      const topMemBody = document.querySelector('#topMemTable tbody');
+      topMemBody.innerHTML = '';
+      for (const row of latest.top_mem || []) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${row.pid}</td><td>${row.pmem}</td><td>${(row.rss_kb/1024).toFixed(1)}</td><td>${shortCmd(row.args)}</td>`;
+        topMemBody.appendChild(tr);
+      }
+
+      const sizes = document.getElementById('sizesTable');
+      sizes.innerHTML = '';
+      for (const [key, value] of Object.entries(latest.sizes || {})) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<th>${key}</th><td>${fmtBytes(value)}</td>`;
+        sizes.appendChild(tr);
+      }
+    }
+
+    refresh().catch(console.error);
+    setInterval(() => refresh().catch(console.error), 3000);
+  </script>
+</body>
+</html>
