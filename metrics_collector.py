@@ -94,6 +94,37 @@ def get_loadavg():
         return {"1m": 0.0, "5m": 0.0, "15m": 0.0}
 
 
+def get_gpu_info():
+    cmd = [
+        "nvidia-smi",
+        "--query-gpu=name,utilization.gpu,utilization.memory,memory.used,memory.total,temperature.gpu,power.draw",
+        "--format=csv,noheader,nounits",
+    ]
+    try:
+        out = subprocess.check_output(cmd, text=True, encoding="utf-8", errors="replace").strip()
+    except Exception:
+        return None
+    if not out:
+        return None
+    first = out.splitlines()[0]
+    parts = [p.strip() for p in first.split(",")]
+    if len(parts) < 7:
+        return None
+    name, gpu_util, mem_util, mem_used, mem_total, temp, power = parts[:7]
+    try:
+        return {
+            "name": name,
+            "utilization_gpu": round(float(gpu_util), 2),
+            "utilization_memory": round(float(mem_util), 2),
+            "memory_used_mb": round(float(mem_used), 2),
+            "memory_total_mb": round(float(mem_total), 2),
+            "temperature_c": round(float(temp), 2),
+            "power_w": round(float(power), 2),
+        }
+    except ValueError:
+        return None
+
+
 def parse_ps():
     cmd = [
         "ps",
@@ -164,6 +195,7 @@ def collect_once():
         "cpu": {"percent": get_cpu_percent()},
         "memory": get_mem_info(),
         "disk": get_disk_info(),
+        "gpu": get_gpu_info(),
         "loadavg": get_loadavg(),
         "process_groups": proc_groups,
         "top_cpu": top_cpu,

@@ -108,7 +108,7 @@
       <div class="card"><div class="label">CPU</div><div class="value" id="cpuNow">—</div><div class="tiny" id="cpuTiny">—</div></div>
       <div class="card"><div class="label">RAM</div><div class="value" id="memNow">—</div><div class="tiny" id="memTiny">—</div></div>
       <div class="card"><div class="label">Disk</div><div class="value" id="diskNow">—</div><div class="tiny" id="diskTiny">—</div></div>
-      <div class="card"><div class="label">Updated</div><div class="value" id="updatedNow">—</div><div class="tiny">127.0.0.1:8765 / auto refresh</div></div>
+      <div class="card"><div class="label">GPU</div><div class="value" id="gpuNow">—</div><div class="tiny" id="gpuTiny">—</div></div>
     </div>
 
     <div class="grid-main">
@@ -165,6 +165,7 @@
             <div class="toggle"><input type="checkbox" checked> CPU</div>
             <div class="toggle"><input type="checkbox" checked> RAM</div>
             <div class="toggle"><input type="checkbox" checked> Disk</div>
+            <div class="toggle"><input type="checkbox" checked> GPU</div>
             <div class="toggle"><input type="checkbox" checked> STT</div>
             <div class="toggle"><input type="checkbox" checked> node_llama</div>
             <div class="toggle"><input type="checkbox" checked> edge-tts</div>
@@ -213,7 +214,8 @@
       data: { labels: [], datasets: [
         { label: 'CPU %', data: [], borderColor: colors.cpu, backgroundColor: 'rgba(120,166,255,.16)', tension: .28, fill: true },
         { label: 'RAM %', data: [], borderColor: colors.ram, backgroundColor: 'rgba(103,232,249,.08)', tension: .28, fill: true },
-        { label: 'Disk %', data: [], borderColor: colors.disk, backgroundColor: 'rgba(251,191,36,.05)', tension: .28, fill: false }
+        { label: 'Disk %', data: [], borderColor: colors.disk, backgroundColor: 'rgba(251,191,36,.05)', tension: .28, fill: false },
+        { label: 'GPU %', data: [], borderColor: colors.green, backgroundColor: 'rgba(52,211,153,.06)', tension: .28, fill: false }
       ]},
       options: chartBase
     });
@@ -284,13 +286,20 @@
       document.getElementById('memTiny').textContent = `${fmtBytes(latest.memory.used)} / ${fmtBytes(latest.memory.total)}`;
       document.getElementById('diskNow').textContent = `${latest.disk.percent}%`;
       document.getElementById('diskTiny').textContent = `${fmtBytes(latest.disk.used)} / ${fmtBytes(latest.disk.total)}`;
-      document.getElementById('updatedNow').textContent = fmtTs(latest.timestamp);
+      if (latest.gpu) {
+        document.getElementById('gpuNow').textContent = `${latest.gpu.utilization_gpu}%`;
+        document.getElementById('gpuTiny').textContent = `${latest.gpu.name} · VRAM ${latest.gpu.memory_used_mb}/${latest.gpu.memory_total_mb} MB · ${latest.gpu.temperature_c}°C`;
+      } else {
+        document.getElementById('gpuNow').textContent = '—';
+        document.getElementById('gpuTiny').textContent = 'GPU metrics unavailable';
+      }
 
       const labels = history.map(h => fmtTs(h.timestamp));
       systemChart.data.labels = labels;
       systemChart.data.datasets[0].data = history.map(h => h.cpu.percent ?? 0);
       systemChart.data.datasets[1].data = history.map(h => h.memory.percent ?? 0);
       systemChart.data.datasets[2].data = history.map(h => h.disk.percent ?? 0);
+      systemChart.data.datasets[3].data = history.map(h => (h.gpu && h.gpu.utilization_gpu) ?? 0);
       systemChart.update();
 
       activityChart.data.labels = labels;
