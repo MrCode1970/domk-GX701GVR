@@ -1,0 +1,218 @@
+{
+  "timestamp": 1774679836,
+  "cpu": {
+    "percent": 4.62
+  },
+  "memory": {
+    "total": 16609767424,
+    "used": 6435295232,
+    "available": 10174472192,
+    "percent": 38.74
+  },
+  "disk": {
+    "path": "/home/domk/.openclaw",
+    "total": 385236336640,
+    "used": 30783221760,
+    "free": 354453114880,
+    "percent": 7.99
+  },
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 2060",
+    "utilization_gpu": 25.0,
+    "utilization_memory": 10.0,
+    "memory_used_mb": 576.0,
+    "memory_total_mb": 6144.0,
+    "temperature_c": 57.0,
+    "power_w": 10.6
+  },
+  "loadavg": {
+    "1m": 0.85,
+    "5m": 0.89,
+    "15m": 0.79
+  },
+  "process_groups": {
+    "openclaw_gateway": {
+      "count": 1,
+      "cpu_percent": 1.1,
+      "mem_percent": 2.7,
+      "rss_mb": 442.99,
+      "pids": [
+        96228
+      ]
+    },
+    "python_stt": {
+      "count": 0,
+      "cpu_percent": 0,
+      "mem_percent": 0,
+      "rss_mb": 0.0,
+      "pids": []
+    },
+    "edge_tts": {
+      "count": 0,
+      "cpu_percent": 0,
+      "mem_percent": 0,
+      "rss_mb": 0.0,
+      "pids": []
+    },
+    "node_llama": {
+      "count": 0,
+      "cpu_percent": 0,
+      "mem_percent": 0,
+      "rss_mb": 0.0,
+      "pids": []
+    }
+  },
+  "top_cpu": [
+    {
+      "pid": 106602,
+      "ppid": 3387,
+      "pcpu": 6.2,
+      "pmem": 1.1,
+      "rss_kb": 183680,
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3376 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=x11 --lang=ru --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=490 --time-ticks-at-unix-epoch=-1774634659846538 --launch-time-ticks=37266925885 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,15083157909768170729,9581651111270299934,2097152 --field-trial-handle=3,i,11703090373114637073,18378145020784960392,262144 --variations-seed-version=20260327-010033.797000-production --pseudonymization-salt-handle=7,i,10806548383060558195,205170369212488086,4 --trace-process-track-uuid=3190709445462377504"
+    },
+    {
+      "pid": 111450,
+      "ppid": 3387,
+      "pcpu": 4.5,
+      "pmem": 1.1,
+      "rss_kb": 178780,
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3376 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=x11 --lang=ru --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=512 --time-ticks-at-unix-epoch=-1774634659846538 --launch-time-ticks=38496999038 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,7473574190950198424,3034522577234007240,2097152 --field-trial-handle=3,i,11703090373114637073,18378145020784960392,262144 --variations-seed-version=20260327-010033.797000-production --pseudonymization-salt-handle=7,i,10806548383060558195,205170369212488086,4 --trace-process-track-uuid=3190709466077298182"
+    },
+    {
+      "pid": 24822,
+      "ppid": 24584,
+      "pcpu": 4.3,
+      "pmem": 4.2,
+      "rss_kb": 681464,
+      "comm": "Discord",
+      "args": "/proc/self/exe --type=renderer --crashpad-handler-pid=24611 --enable-crash-reporter=d708954c-3345-4f37-8a03-13b8f8bb1249,no_channel --user-data-dir=/home/domk/.config/discord --standard-schemes=disclip --secure-schemes=disclip,sentry-ipc --bypasscsp-schemes=sentry-ipc --cors-schemes=sentry-ipc --fetch-schemes=disclip,sentry-ipc --streaming-schemes=disclip --app-path=/usr/share/discord/resources/app.asar --no-sandbox --no-zygote --enable-blink-features=EnumerateDevices,AudioOutputDevices --autoplay-policy=no-user-gesture-required --openh264-library-path=/home/domk/.config/discord/discord_asset_cache/openh264/libopenh264-2.5.1-linux64.7.so --enable-libopenh264 --lang=ru --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=6 --time-ticks-at-unix-epoch=-1774640417780360 --launch-time-ticks=10048895729 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,14558352252220986811,16365156352479698314,262144 --disable-features=AllowAggressiveThrottlingWithWebSocket,HardwareMediaKeyHandling,IntensiveWakeUpThrottling,MediaSessionService,ScreenAIOCREnabled,SpareRendererForSitePerProcess,UseEcoQoSForBackgroundProcess,WinRetrieveSuggestionsOnlyOnDemand --variations-seed-version --enable-node-leakage-in-renderers"
+    },
+    {
+      "pid": 108219,
+      "ppid": 3387,
+      "pcpu": 3.8,
+      "pmem": 1.7,
+      "rss_kb": 280028,
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3376 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=x11 --lang=ru --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=497 --time-ticks-at-unix-epoch=-1774634659846538 --launch-time-ticks=37762835269 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,7364819822135173821,16582462037811952846,2097152 --field-trial-handle=3,i,11703090373114637073,18378145020784960392,262144 --variations-seed-version=20260327-010033.797000-production --pseudonymization-salt-handle=7,i,10806548383060558195,205170369212488086,4 --trace-process-track-uuid=3190709452021670447"
+    },
+    {
+      "pid": 107614,
+      "ppid": 1207,
+      "pcpu": 3.6,
+      "pmem": 0.2,
+      "rss_kb": 35320,
+      "comm": "python3",
+      "args": "python3 /home/domk/.openclaw/workspace/metrics_collector.py"
+    },
+    {
+      "pid": 3411,
+      "ppid": 3384,
+      "pcpu": 3.5,
+      "pmem": 2.3,
+      "rss_kb": 374712,
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome --type=gpu-process --ozone-platform=x11 --crashpad-handler-pid=3376 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --gpu-preferences=UAAAAAAAAAAgAQAEAAAAAAAAAAAAAGAAAQAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAYAAAAAAAAABgAAAAAAAAAAQAAAAAAAAAIAAAAAAAAAAgAAAAAAAAA --shared-files --metrics-shmem-handle=4,i,11323379549827415180,10177880968758509313,262144 --field-trial-handle=3,i,11703090373114637073,18378145020784960392,262144 --variations-seed-version=20260327-010033.797000-production --pseudonymization-salt-handle=7,i,10806548383060558195,205170369212488086,4 --trace-process-track-uuid=3190708988185955192"
+    },
+    {
+      "pid": 102942,
+      "ppid": 3387,
+      "pcpu": 2.5,
+      "pmem": 1.1,
+      "rss_kb": 189240,
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3376 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=x11 --lang=ru --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=467 --time-ticks-at-unix-epoch=-1774634659846538 --launch-time-ticks=36346259995 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,2768514039319842621,8333644317631451754,2097152 --field-trial-handle=3,i,11703090373114637073,18378145020784960392,262144 --variations-seed-version=20260327-010033.797000-production --pseudonymization-salt-handle=7,i,10806548383060558195,205170369212488086,4 --trace-process-track-uuid=3190709423910414977"
+    },
+    {
+      "pid": 1727,
+      "ppid": 1674,
+      "pcpu": 2.4,
+      "pmem": 2.8,
+      "rss_kb": 469924,
+      "comm": "cinnamon",
+      "args": "cinnamon --replace"
+    }
+  ],
+  "top_mem": [
+    {
+      "pid": 24822,
+      "ppid": 24584,
+      "pcpu": 4.3,
+      "pmem": 4.2,
+      "rss_kb": 681464,
+      "comm": "Discord",
+      "args": "/proc/self/exe --type=renderer --crashpad-handler-pid=24611 --enable-crash-reporter=d708954c-3345-4f37-8a03-13b8f8bb1249,no_channel --user-data-dir=/home/domk/.config/discord --standard-schemes=disclip --secure-schemes=disclip,sentry-ipc --bypasscsp-schemes=sentry-ipc --cors-schemes=sentry-ipc --fetch-schemes=disclip,sentry-ipc --streaming-schemes=disclip --app-path=/usr/share/discord/resources/app.asar --no-sandbox --no-zygote --enable-blink-features=EnumerateDevices,AudioOutputDevices --autoplay-policy=no-user-gesture-required --openh264-library-path=/home/domk/.config/discord/discord_asset_cache/openh264/libopenh264-2.5.1-linux64.7.so --enable-libopenh264 --lang=ru --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=6 --time-ticks-at-unix-epoch=-1774640417780360 --launch-time-ticks=10048895729 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,14558352252220986811,16365156352479698314,262144 --disable-features=AllowAggressiveThrottlingWithWebSocket,HardwareMediaKeyHandling,IntensiveWakeUpThrottling,MediaSessionService,ScreenAIOCREnabled,SpareRendererForSitePerProcess,UseEcoQoSForBackgroundProcess,WinRetrieveSuggestionsOnlyOnDemand --variations-seed-version --enable-node-leakage-in-renderers"
+    },
+    {
+      "pid": 39550,
+      "ppid": 39549,
+      "pcpu": 0.8,
+      "pmem": 3.7,
+      "rss_kb": 603008,
+      "comm": "Telegram",
+      "args": "/app/bin/Telegram"
+    },
+    {
+      "pid": 3368,
+      "ppid": 1727,
+      "pcpu": 0.8,
+      "pmem": 3.1,
+      "rss_kb": 509284,
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome"
+    },
+    {
+      "pid": 1727,
+      "ppid": 1674,
+      "pcpu": 2.4,
+      "pmem": 2.8,
+      "rss_kb": 469924,
+      "comm": "cinnamon",
+      "args": "cinnamon --replace"
+    },
+    {
+      "pid": 96228,
+      "ppid": 1207,
+      "pcpu": 1.1,
+      "pmem": 2.7,
+      "rss_kb": 453624,
+      "comm": "openclaw-gatewa",
+      "args": "openclaw-gateway"
+    },
+    {
+      "pid": 3411,
+      "ppid": 3384,
+      "pcpu": 3.5,
+      "pmem": 2.3,
+      "rss_kb": 374712,
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome --type=gpu-process --ozone-platform=x11 --crashpad-handler-pid=3376 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --gpu-preferences=UAAAAAAAAAAgAQAEAAAAAAAAAAAAAGAAAQAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAYAAAAAAAAABgAAAAAAAAAAQAAAAAAAAAIAAAAAAAAAAgAAAAAAAAA --shared-files --metrics-shmem-handle=4,i,11323379549827415180,10177880968758509313,262144 --field-trial-handle=3,i,11703090373114637073,18378145020784960392,262144 --variations-seed-version=20260327-010033.797000-production --pseudonymization-salt-handle=7,i,10806548383060558195,205170369212488086,4 --trace-process-track-uuid=3190708988185955192"
+    },
+    {
+      "pid": 6067,
+      "ppid": 3387,
+      "pcpu": 0.1,
+      "pmem": 2.2,
+      "rss_kb": 357828,
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3376 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=x11 --lang=ru --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=76 --time-ticks-at-unix-epoch=-1774634659846538 --launch-time-ticks=957981353 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,10036175787541368849,4351240373956754573,2097152 --field-trial-handle=3,i,11703090373114637073,18378145020784960392,262144 --variations-seed-version=20260327-010033.797000-production --pseudonymization-salt-handle=7,i,10806548383060558195,205170369212488086,4 --trace-process-track-uuid=3190709057527052018"
+    },
+    {
+      "pid": 3736,
+      "ppid": 3387,
+      "pcpu": 0.2,
+      "pmem": 2.1,
+      "rss_kb": 355968,
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3376 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=x11 --lang=ru --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=29 --time-ticks-at-unix-epoch=-1774634659846538 --launch-time-ticks=423576473 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,5572298877819683062,5956070884672497167,2097152 --field-trial-handle=3,i,11703090373114637073,18378145020784960392,262144 --variations-seed-version=20260327-010033.797000-production --pseudonymization-salt-handle=7,i,10806548383060558195,205170369212488086,4 --trace-process-track-uuid=3190709013486085115"
+    }
+  ],
+  "sizes": {
+    "openclaw_cache": 328651024,
+    "openclaw_memory": 7815168,
+    "audio_stt_venv": 539661716
+  }
+}
