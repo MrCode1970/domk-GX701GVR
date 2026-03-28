@@ -1,0 +1,11 @@
+.openclaw/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+backups/
+audit/example.png
+
+AGENTS.md.bak
+AGENTS.off
