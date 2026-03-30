@@ -1,21 +1,23 @@
 # WORKLOG
 
 ## Active task
-- Finish recovery-discipline cleanup for OpenClaw workspace instructions.
+- Build a durable, low-token memory/recovery workflow and define how a Discord library + archivist layer should fit into it.
 
 ## Last proven step
-- `AGENTS.md` and `HEARTBEAT.md` were updated with recovery and evidence rules.
-- `WORKLOG.md` was created in `/home/domk/.openclaw/workspace/`.
-- Default model is already `openai-codex/gpt-5.4`.
-- Model catalog was previously cleaned up and is in the intended state.
+- Reviewed OpenClaw memory/compaction docs and current workspace files.
+- Confirmed the current recovery guidance was too eager and heartbeat guidance was too heavy.
+- Confirmed local semantic-memory deep probe currently fails because `node-llama-cpp` is missing, so local memory cannot be treated as required infrastructure.
+- Drafted the target architecture: cheap `MEMORY.md`, fact-only daily memory, heartbeat as watchdog, recovery only on real context failure, Discord library as curated external knowledge layer.
 
 ## Next step
-- Manually verify in a fresh UI/TUI session whether `WORKLOG.md` appears in injected workspace files via `/context list` or `/context detail`.
+- Turn the architecture into a concrete operating blueprint for the archivist/library workflow and keep workspace files aligned with that blueprint.
 
 ## Unresolved
-- Auto-injection of `WORKLOG.md` is not yet proven by live runtime output in this session.
+- Archivist role, triggers, and write destinations still need a concrete spec.
+- Discord library structure and anti-drift rules still need to be codified.
+- Local memory acceleration remains optional until explicitly fixed.
 
 ## Evidence
-- latest diff: `AGENTS.md` and `HEARTBEAT.md` contain the new recovery/evidence rules.
-- latest confirmed command output: `openclaw sessions --json` showed the active main session; `openclaw status` showed default model `gpt-5.4`.
-- notes: `WORKLOG.md` exists and is readable; CLI attempt to get `/context detail` equivalent did not produce usable proof of injection.
+- `openclaw status --deep` showed heartbeat active, memory indexed, and the system otherwise healthy.
+- `openclaw memory status --deep --json` failed with missing `node-llama-cpp`, proving local embeddings are not currently ready as a foundation.
+- `MEMORY.md` and `WORKLOG.md` contained stale focus before this cleanup.

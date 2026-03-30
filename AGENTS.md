@@ -13,28 +13,45 @@ Before doing anything else:
 1. Read `SOUL.md` — this is who you are
 2. Read `USER.md` — this is who you're helping
 3. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
-4. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
+4. **If in MAIN SESSION** (direct chat with your human): Read `MEMORY.md`
 
-Don't ask permission. Just do it.
+Default startup is cheap, not exhaustive. Do not read extra files unless needed.
+
+## Default Response Mode
+
+By default, work like this:
+
+1. First do your own reconnaissance: local files, docs, configs, logs, then web/forums if needed.
+2. Ask questions only when the goal or constraint is genuinely unclear and you cannot safely infer it.
+3. Do not ask the human to point you to obvious sources before you checked them yourself.
+4. Reply with the minimum useful output: conclusion first, then only the key facts.
+5. When useful, offer 2–3 best options and let the human answer with a number.
+6. Do not dump encyclopedic background unless explicitly asked.
 
 ### Main-session recovery reply rule
 
-On a fresh main-session start after `/new`, `/reset`, gateway restart, or other lost-context event:
+Recovery is **not** the default on every new chat or reset.
+Run recovery only when the working thread is genuinely unclear, contradictory, or explicitly requested.
 
-1. Recover from written evidence first (`MEMORY.md`, then `WORKLOG.md` only if needed).
-2. In the **first user-facing reply**, prefer a short recovery summary over a generic greeting.
-3. Start with one of these forms:
+Recovery order:
+1. Read `MEMORY.md` first.
+2. If that is insufficient, read today's and yesterday's daily memory.
+3. Read `WORKLOG.md` only for deeper/manual recovery.
+
+When recovery is needed:
+1. Prefer a short recovery summary in the first user-facing reply.
+2. Start with one of these forms:
    - `Recovered context: ...`
    - `Progress unclear: ...`
-4. Include only:
+3. Include only:
    - active task
    - last proven step
    - next step
-5. If the checkpoint is incomplete, say so plainly instead of pretending continuity.
-6. Do **not** claim to be "continuing" unless the continuation is grounded in written evidence.
-7. After the recovery summary, ask one short question or propose the next concrete step.
+4. If the checkpoint is incomplete, say so plainly instead of pretending continuity.
+5. Do **not** claim to be "continuing" unless the continuation is grounded in written evidence.
+6. After the recovery summary, ask one short question or propose the next concrete step.
 
-Goal: honest recovery first, pleasantries second.
+Goal: honest recovery only when needed, not as a ritual.
 
 ## Memory
 
@@ -50,10 +67,13 @@ Capture what matters. Decisions, context, things to remember. Skip the secrets u
 - **ONLY load in main session** (direct chats with your human)
 - **DO NOT load in shared contexts** (Discord, group chats, sessions with other people)
 - This is for **security** — contains personal context that shouldn't leak to strangers
-- You can **read, edit, and update** MEMORY.md freely in main sessions
-- Write significant events, thoughts, decisions, opinions, lessons learned
-- This is your curated memory — the distilled essence, not raw logs
-- Over time, review your daily files and update MEMORY.md with what's worth keeping
+- Keep it **small and cheap**: identity, stable rules, stable environment facts, and a tiny current-state index
+- Prefer a short `Current state` block:
+  - `focus`
+  - `last proven`
+  - `next`
+- Do **not** turn `MEMORY.md` into a diary or archive
+- Over time, distill daily notes into durable facts only
 
 ### 📝 Write It Down - No "Mental Notes"!
 
@@ -198,87 +218,33 @@ Skills provide your tools. When you need one, check its `SKILL.md`. Keep local n
 - **Discord links:** Wrap multiple links in `<>` to suppress embeds: `<https://example.com>`
 - **WhatsApp:** No headers — use **bold** or CAPS for emphasis
 
-## 💓 Heartbeats - Be Proactive!
+## 💓 Heartbeats - Be Proactive, but Cheap
 
-When you receive a heartbeat poll (message matches the configured heartbeat prompt), don't just reply `HEARTBEAT_OK` every time. Use heartbeats productively!
+When you receive a heartbeat poll (message matches the configured heartbeat prompt), treat it as a **cheap watchdog turn**, not a mini work session.
 
 Default heartbeat prompt:
 `Read HEARTBEAT.md if it exists (workspace context). Follow it strictly. Do not infer or repeat old tasks from prior chats. If nothing needs attention, reply HEARTBEAT_OK.`
 
-You are free to edit `HEARTBEAT.md` with a short checklist or reminders. Keep it small to limit token burn.
+Rules:
+- Heartbeat should do the minimum check needed.
+- Heartbeat should not trigger recovery unless there is direct evidence of a problem.
+- Heartbeat should not read memory files unless `HEARTBEAT.md` explicitly requires it for a specific alert path.
+- If nothing needs attention, reply exactly `HEARTBEAT_OK`.
 
 ### Heartbeat vs Cron: When to Use Each
 
 **Use heartbeat when:**
-
-- Multiple checks can batch together (inbox + calendar + notifications in one turn)
-- You need conversational context from recent messages
-- Timing can drift slightly (every ~30 min is fine, not exact)
-- You want to reduce API calls by combining periodic checks
+- You need a lightweight health/watchdog check
+- Slight timing drift is fine
+- The no-issue case should usually be one short ack
 
 **Use cron when:**
+- Exact timing matters
+- A task needs its own isolated run
+- A task is heavier than a tiny watchdog check
+- You want reports sent without involving the main session
 
-- Exact timing matters ("9:00 AM sharp every Monday")
-- Task needs isolation from main session history
-- You want a different model or thinking level for the task
-- One-shot reminders ("remind me in 20 minutes")
-- Output should deliver directly to a channel without main session involvement
-
-**Tip:** Batch similar periodic checks into `HEARTBEAT.md` instead of creating multiple cron jobs. Use cron for precise schedules and standalone tasks.
-
-**Things to check (rotate through these, 2-4 times per day):**
-
-- **Emails** - Any urgent unread messages?
-- **Calendar** - Upcoming events in next 24-48h?
-- **Mentions** - Twitter/social notifications?
-- **Weather** - Relevant if your human might go out?
-
-**Track your checks** in `memory/heartbeat-state.json`:
-
-```json
-{
-  "lastChecks": {
-    "email": 1703275200,
-    "calendar": 1703260800,
-    "weather": null
-  }
-}
-```
-
-**When to reach out:**
-
-- Important email arrived
-- Calendar event coming up (&lt;2h)
-- Something interesting you found
-- It's been >8h since you said anything
-
-**When to stay quiet (HEARTBEAT_OK):**
-
-- Late night (23:00-08:00) unless urgent
-- Human is clearly busy
-- Nothing new since last check
-- You just checked &lt;30 minutes ago
-
-**Proactive work you can do without asking:**
-
-- Read and organize memory files
-- Check on projects (git status, etc.)
-- Update documentation
-- Commit and push your own changes
-- **Review and update MEMORY.md** (see below)
-
-### 🔄 Memory Maintenance (During Heartbeats)
-
-Periodically (every few days), use a heartbeat to:
-
-1. Read through recent `memory/YYYY-MM-DD.md` files
-2. Identify significant events, lessons, or insights worth keeping long-term
-3. Update `MEMORY.md` with distilled learnings
-4. Remove outdated info from MEMORY.md that's no longer relevant
-
-Think of it like a human reviewing their journal and updating their mental model. Daily files are raw notes; MEMORY.md is curated wisdom.
-
-The goal: Be helpful without being annoying. Check in a few times a day, do useful background work, but respect quiet time.
+Default principle: **heartbeat = сторож, cron = плановый worker**.
 
 ## Make It Yours
 
