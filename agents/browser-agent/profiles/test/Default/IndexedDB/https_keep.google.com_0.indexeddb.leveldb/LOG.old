@@ -1,0 +1,2 @@
+2026/04/02-11:04:08.643 88ea6 Creating DB /home/domk/.openclaw/workspace/agents/browser-agent/profiles/test/Default/IndexedDB/https_keep.google.com_0.indexeddb.leveldb since it was missing.
+2026/04/02-11:04:08.647 88ea6 Reusing MANIFEST /home/domk/.openclaw/workspace/agents/browser-agent/profiles/test/Default/IndexedDB/https_keep.google.com_0.indexeddb.leveldb/MANIFEST-000001
