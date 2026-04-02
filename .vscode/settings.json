@@ -1,0 +1,78 @@
+{
+  "workbench.colorTheme": "One Dark Pro",
+  "workbench.iconTheme": "material-icon-theme",
+
+  "editor.fontSize": 12,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.formatOnSave": true,
+  "editor.wordWrap": "on",
+  "editor.rulers": [80, 120],
+
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.wordWrap": "on"
+  },
+
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+
+  "[yaml]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 2000,
+  "files.exclude": {
+    "**/.git": false,
+    "**/node_modules": true,
+    "**/.DS_Store": true
+  },
+
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.ignoreLimitWarning": true,
+  "gitlens.advanced.messages": {
+    "suppressShowKeyBindingsNotice": true
+  },
+
+  "plantuml.render": "PlantUMLServer",
+  "plantuml.server": "https://www.plantuml.com/plantuml",
+  "plantuml.exportOutDir": "./systems/diagrams/out",
+  "plantuml.jar": "",
+  "plantuml.exportConcurrency": 3,
+
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/dist": true
+  },
+
+  "terminal.integrated.fontSize": 11,
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.env.linux": {
+    "PATH": "/home/domk/.npm-global/bin:/usr/local/bin:/usr/bin:/bin"
+  },
+
+  "workbench.startupEditor": "none",
+  "workbench.editor.enablePreview": true,
+  "workbench.editor.enablePreviewFromQuickOpen": false,
+
+  "markdown.preview.fontSize": 13,
+  "markdown.preview.lineHeight": 1.6,
+
+  "extensions.ignoreRecommendations": false,
+  "todo-tree.tree.showScanModeButton": false,
+  "todo-tree.highlights.defaultHighlight": {
+    "foreground": "white",
+    "background": "#FF6B6B",
+    "iconColor": "#FF6B6B"
+  },
+
+  "diffEditor.renderSideBySide": true
+}

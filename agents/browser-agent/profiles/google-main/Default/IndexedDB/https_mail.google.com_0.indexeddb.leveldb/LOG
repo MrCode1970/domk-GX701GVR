@@ -1,0 +1,11 @@
+2026/04/02-09:52:29.492 85925 Reusing MANIFEST /home/domk/.openclaw/workspace/agents/browser-agent/profiles/google-main/Default/IndexedDB/https_mail.google.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/04/02-09:52:29.492 85925 Recovering log #4
+2026/04/02-09:52:29.501 85925 Level-0 table #7: started
+2026/04/02-09:52:29.548 85925 Level-0 table #7: 3630346 bytes OK
+2026/04/02-09:52:29.550 85925 Recovering log #6
+2026/04/02-09:52:29.551 85925 Reusing old log /home/domk/.openclaw/workspace/agents/browser-agent/profiles/google-main/Default/IndexedDB/https_mail.google.com_0.indexeddb.leveldb/000006.log 
+2026/04/02-09:52:29.554 85925 Delete type=0 #4
+2026/04/02-09:52:31.162 85925 Moved #7 to level-1 3630346 bytes OK: files[ 0 1 1 0 0 0 0 ]
+2026/04/02-09:52:44.337 85926 Level-0 table #9: started
+2026/04/02-09:52:44.367 85926 Level-0 table #9: 3171890 bytes OK
+2026/04/02-09:52:44.370 85926 Delete type=0 #6

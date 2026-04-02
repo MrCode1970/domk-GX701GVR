@@ -1,0 +1,114 @@
+@startuml discord_workflow
+!theme plain
+skinparam backgroundColor #fcfcfc
+skinparam shadowing false
+skinparam arrowColor #333333
+skinparam activity {
+  BackgroundColor #eef6ff
+  BorderColor #4a6fa5
+  DiamondBackgroundColor #fff4d6
+  DiamondBorderColor #b7791f
+  StartColor #68d391
+  EndColor #fc8181
+  FontColor #222222
+}
+skinparam note {
+  BackgroundColor #f7fafc
+  BorderColor #a0aec0
+  FontColor #1a202c
+}
+
+title fox — Рабочий поток Discord: chat → thread → archive → memory → kb
+
+start
+
+:#fox-chat
+вход / быстрый диалог / старт темы;
+note right
+  Роль канала:
+  - быстрые вопросы
+  - уточнения
+  - старт обсуждений
+end note
+
+if (Тема короткая
+и одноразовая?) then (да)
+  :Остаётся в #fox-chat;
+  note right
+    Здесь остаётся:
+    - короткий ответ
+    - уточнение
+    - мелкое согласование
+  end note
+  stop
+else (нет)
+  :Создаём или продолжаем тред;
+endif
+
+:Тред
+рабочая зона одной темы;
+note right
+  В треде живут:
+  - цель
+  - вопросы
+  - гипотезы
+  - промежуточные шаги
+  - итог
+end note
+
+if (Есть повторно полезный итог?) then (да)
+  :#fox-archive
+  библиотека итогов;
+  note right
+    Архивируем, если есть:
+    - решение
+    - инструкция
+    - полезная схема
+    - вывод, на который
+      потом захочется ссылаться
+  end note
+else (нет)
+  :Без архивирования;
+endif
+
+if (Есть устойчивое правило
+или важный контекст для Лиса?) then (да)
+  :OpenClaw memory
+  то, что нужно помнить дальше;
+  note right
+    В память идёт:
+    - правило работы
+    - предпочтение хозяина
+    - активный контекст
+    - архитектурная договорённость
+  end note
+else (нет)
+  :В память не писать;
+endif
+
+if (Это знание / инструкция /
+документируемое решение?) then (да)
+  :kb/
+  знания и документация;
+  note right
+    В KB идёт:
+    - оформленное решение
+    - инструкция
+    - стабильная документация
+    - то, что должно жить дольше чата
+  end note
+else (нет)
+  :В KB не переносить;
+endif
+
+:Тема завершена;
+
+note right
+  Формула системы:
+  чат рождает → тред решает → архив хранит
+  → память помнит → KB закрепляет
+end note
+
+stop
+
+@enduml

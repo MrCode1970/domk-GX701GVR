@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -euo pipefail
+exec /home/domk/.openclaw/workspace/agents/browser-agent/bin/fox-browser launch google-main --hold-ms 600000 "$@"

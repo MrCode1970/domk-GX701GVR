@@ -1,0 +1,103 @@
+@startuml thread_lifecycle
+!theme plain
+skinparam backgroundColor #fcfcfc
+skinparam shadowing false
+skinparam arrowColor #333333
+skinparam activity {
+  BackgroundColor #eef6ff
+  BorderColor #4a6fa5
+  DiamondBackgroundColor #fff4d6
+  DiamondBorderColor #b7791f
+  StartColor #68d391
+  EndColor #fc8181
+  FontColor #222222
+}
+skinparam note {
+  BackgroundColor #f7fafc
+  BorderColor #a0aec0
+  FontColor #1a202c
+}
+
+title fox — Жизненный цикл треда
+
+start
+
+:Тема родилась в #fox-chat;
+
+if (Тема требует
+отдельной работы?) then (да)
+  :Создать тред;
+else (нет)
+  :Оставить в чате;
+  stop
+endif
+
+:Тред активен;
+note right
+  В треде должно быть:
+  - понятная цель
+  - рабочий контекст
+  - движение к результату
+end note
+
+if (Нужно уточнение /
+разбор /
+несколько шагов?) then (да)
+  :Продолжаем работу в треде;
+else (нет)
+  :Тред можно быстро завершить;
+endif
+
+if (Тема застопорилась
+или ждёт решения?) then (да)
+  :Пауза / ожидание;
+  note right
+    Это не провал.
+    Просто тема временно
+    не движется.
+  end note
+  :Возврат к треду,
+  когда появится ход;
+endif
+
+if (Есть итог?) then (да)
+  :Тред дал результат;
+else (нет)
+  :Оставить тред рабочим
+  или закрыть без результата;
+  stop
+endif
+
+if (Итог полезен повторно?) then (да)
+  :Кандидат в #fox-archive;
+else (нет)
+  :Без архива;
+endif
+
+if (Есть правило или устойчивый
+контекст для Лиса?) then (да)
+  :Обновить память;
+else (нет)
+  :Память не трогать;
+endif
+
+if (Это знание / инструкция /
+стабильное решение?) then (да)
+  :Зафиксировать в kb/;
+else (нет)
+  :В KB не переносить;
+endif
+
+:Тред завершён;
+
+note right
+  Хороший финал треда:
+  - решение найдено
+  - или решено не делать
+  - или тема честно закрыта
+  - или её выводы перенесены дальше
+end note
+
+stop
+
+@enduml

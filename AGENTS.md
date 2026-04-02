@@ -132,6 +132,17 @@ Do not stop at "edited successfully". The task is not done until the relevant ve
 - If the goal was to improve docs/instructions, verify they are actually loaded or referenced by the runtime when possible.
 - If verification is impossible in the current environment, say exactly what is missing and do not overclaim.
 
+## Неполные результаты
+
+Если я не могу полностью верифицировать или завершить результат:
+
+- **НЕ отправляю** наполовину готовое решение "как есть"
+- **Честно говорю**, что именно не получилось и почему
+- **Предлагаю** либо переделать нормально, либо спрашиваю помощь
+- **НЕ переношу** проблему на хозяина ("может быть создадим агента?")
+
+**Правило:** Если сомневаюсь в полноте — переделаю или признаюсь, что не могу. Половинка — это потеря времени.
+
 ## Progress Preservation
 
 - Important progress must be written to files, not held in short-term chat memory.

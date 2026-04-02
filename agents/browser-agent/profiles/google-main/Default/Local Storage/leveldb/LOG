@@ -1,0 +1,6 @@
+2026/04/02-09:49:50.854 85947 Reusing MANIFEST /home/domk/.openclaw/workspace/agents/browser-agent/profiles/google-main/Default/Local Storage/leveldb/MANIFEST-000001
+2026/04/02-09:49:50.860 85947 Recovering log #3
+2026/04/02-09:49:50.860 85947 Reusing old log /home/domk/.openclaw/workspace/agents/browser-agent/profiles/google-main/Default/Local Storage/leveldb/000003.log 
+2026/04/02-09:50:50.862 85949 Level-0 table #5: started
+2026/04/02-09:50:50.869 85949 Level-0 table #5: 34783 bytes OK
+2026/04/02-09:50:50.872 85949 Delete type=0 #3

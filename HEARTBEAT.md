@@ -14,13 +14,8 @@ Do the smallest check that can detect a real issue.
 
 ## Default check
 
-Run:
-```bash
-openclaw status | grep -E "Gateway|running"
-```
-
-If daemon is not responding, report it.
-Do not auto-restart.
+No custom checks.
+If nothing explicitly needs attention, reply exactly: `HEARTBEAT_OK`
 
 ---
 

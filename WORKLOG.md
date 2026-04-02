@@ -1,23 +1,217 @@
-# WORKLOG
+---
+date: 2026-03-31
+tags: [worklog, system, progress]
+status: active
+---
 
-## Active task
-- Build a durable, low-token memory/recovery workflow and define how a Discord library + archivist layer should fit into it.
+# WORKLOG — Журнал работы
 
-## Last proven step
-- Reviewed OpenClaw memory/compaction docs and current workspace files.
-- Confirmed the current recovery guidance was too eager and heartbeat guidance was too heavy.
-- Confirmed local semantic-memory deep probe currently fails because `node-llama-cpp` is missing, so local memory cannot be treated as required infrastructure.
-- Drafted the target architecture: cheap `MEMORY.md`, fact-only daily memory, heartbeat as watchdog, recovery only on real context failure, Discord library as curated external knowledge layer.
+Хронология решений и действий. История строительства системы.
 
-## Next step
-- Turn the architecture into a concrete operating blueprint for the archivist/library workflow and keep workspace files aligned with that blueprint.
+---
 
-## Unresolved
-- Archivist role, triggers, and write destinations still need a concrete spec.
-- Discord library structure and anti-drift rules still need to be codified.
-- Local memory acceleration remains optional until explicitly fixed.
+## 2026-03-31
 
-## Evidence
-- `openclaw status --deep` showed heartbeat active, memory indexed, and the system otherwise healthy.
-- `openclaw memory status --deep --json` failed with missing `node-llama-cpp`, proving local embeddings are not currently ready as a foundation.
-- `MEMORY.md` and `WORKLOG.md` contained stale focus before this cleanup.
+### 🔥 НАЧАЛО СИСТЕМЫ
+
+**04:40 — Обсуждение структуры**
+- Хозяин: организовать Discord и создать KB
+- Решение: две отдельные системы (Discord = болталка, KB = истина)
+- Статус: ✅ Решено
+
+**04:56 — Начало строительства**
+
+**Создано:**
+1. ✅ `kb/README.md` — инструкция по KB
+2. ✅ `kb/projects/fox/tasks.md` — задачи проекта
+3. ✅ `kb/projects/fox/goals.md` — цели
+4. ✅ `kb/projects/fox/stack.md` — tech stack
+5. ✅ `kb/projects/fox/decisions.md` — ADRs (5 решений)
+6. ✅ `kb/projects/fox/learnings.md` — lessons learned (5 уроков)
+
+**Git инициализация:**
+- `git init kb/`
+- `git config --global user.email "fox@openclaw.local"`
+- `git config --global user.name "Лис"`
+- Первый коммит: `67cd191` — "Initial commit: KB structure with projects/fox docs"
+
+**Итог фазы 1:** ✅ Knowledge Base структура готова
+
+---
+
+### 🧹 УБОРКА DISCORD
+
+**04:56 — Реорганизация сервера**
+
+**Удалено (мусор и тесты):**
+- ❌ Форум `fox-chat` (ID 1488037503272353842) — дублирование
+- ❌ `bot-discussion` (ID 1487995333018386452) — тесты
+- ❌ `тестовый-болталка` (ID 1487999028342947860) — мусор
+
+**Создано (категории):**
+- ✅ `🔥 ОСНОВНОЕ` (ID 1488334584448815124)
+- ✅ `📚 DOCS & Q&A` (ID 1488334584960647268)
+- ✅ `⚙️ СЕРВИС` (ID 1488334584499409077)
+
+**Переорганизовано (каналы в категории):**
+- `#fox-chat` → ОСНОВНОЕ (основной чат)
+- `#fox-archive` → ОСНОВНОЕ (новый форум для архива)
+- `#openclaw-forum` → DOCS & Q&A (Q&A про OC)
+- `#oc_изнутри` → DOCS & Q&A (архитектура)
+- `#opclw-docs` → DOCS & Q&A (документация)
+- `#настройки` → СЕРВИС (конфиги)
+- `#openrouter` → СЕРВИС (API)
+
+**Обновлено (описания каналов):**
+- Каждый канал получил ясное описание (topic)
+
+**Итог фазы 2:** ✅ Discord структурирован и готов
+
+---
+
+### 🏗️ СИСТЕМА ПАМЯТИ И ВИЗУАЛИЗАЦИЯ
+
+**04:56 — Проектирование архитектуры**
+
+**Созданы системные файлы:**
+
+1. ✅ `systems/memory-schema.puml`
+   - PlantUML диаграмма архитектуры памяти
+   - Входящие потоки (Discord, опыт, внешний опыт)
+   - Обработка (анализ, фильтрация)
+   - Хранилища (MEMORY.md, memory/YYYY-MM-DD, KB, .vscode/)
+   - Выходящие потоки (визуализация, интеграции, автоматизация)
+   - **Для вас**: видеть логику системы
+   - **Для меня**: знать где искать информацию
+
+2. ✅ `systems/workflow.md`
+   - Подробное описание порядка работы
+   - Цикл: постановка → решение → результат → архив
+   - 4 фазы работы над каждой задачей
+   - Примеры реальных процессов
+   - Правила сохранения (когда что писать)
+   - Режимы памяти (MEMORY vs memory/ vs KB)
+   - Статусы задач и эскалация
+   - **Для вас**: понять логику, чего ждать
+   - **Для меня**: четкий процесс, что когда делать
+
+**Обновлено (KB задачи):**
+- Пересчитал статусы задач 1, 2, 3
+- Добавил задачу 4 (система памяти и визуализация)
+
+**Итог фазы 3:** ✅ Архитектура спроектирована
+
+---
+
+## 📊 Статус проекта (по фазам)
+
+### Фаза 1: Knowledge Base ✅ DONE
+- [x] Структура директорий
+- [x] Первые документы (5 файлов)
+- [x] Git инициализация
+- [x] Первый коммит
+
+### Фаза 2: Discord Структура ✅ DONE
+- [x] Удаление мусора
+- [x] Создание категорий
+- [x] Организация каналов
+- [x] Обновление описаний
+
+### Фаза 3: Система Памяти 🔄 IN PROGRESS
+- [x] Визуальная схема (memory-schema.puml)
+- [x] Порядок работы (workflow.md)
+- [ ] ⏳ Ожидание OK от Хозяина
+- [ ] Интеграция VSC
+- [ ] Конфиг .vscode/
+- [ ] Идеи автоматизации
+
+---
+
+## 🔮 ЧТО ДАЛЬШЕ
+
+### Сейчас ожидаем
+1. **Ваше OK на визуальную схему** (`memory-schema.puml`)
+2. **Ваши комментарии на workflow** (`workflow.md`)
+
+### После OK (Фаза 4)
+1. `systems/vsc-integration.md` — как VSC нам поможет
+2. `.vscode/settings.json` — конфиг мого рабочего места
+3. `systems/automation-ideas.md` — где автоматизировать
+
+### После Фазы 4
+1. Discord обсуждение и реализация (выносить в KB, использовать fox-archive)
+2. Интеграция памяти с OpenClaw (MEMORY.md синхронизация)
+3. Автоматизация (cron, bot команды, экспорт)
+
+---
+
+## 📝 Решения (ADR-style)
+
+### Почему две отдельные системы (Discord + KB)?
+- Discord = живое, эфемерное (удобно сейчас, теряется потом)
+- KB = мёртвое, вечное (неудобно сейчас, спасает потом)
+- Разделение даёт лучший результат: одновременно удобно писать и помнить
+
+### Почему PlantUML диаграмма?
+- Можно открыть в VSC (расширение есть)
+- Версионируется в git
+- Легко изменять (текст → диаграмма)
+- Можно экспортировать в PNG если нужно показать
+
+### Почему workflow.md вместо других форматов?
+- Markdown = универсален (везде читается)
+- Git-friendly (diff показывает изменения)
+- Можно встроить в VSC
+- Подходит для документирования процессов
+
+---
+
+## 💭 Мысли по автоматизации
+
+**Что можно ботить легко:**
+- Git commits (я буду делать `git add & commit` после каждой задачи)
+- File watching (отслеживать изменения и напоминать)
+- Remind'ы (еженедельный review, месячный архив)
+
+**Что ботить сложнее:**
+- Discord → KB экспорт (нужны правила что экспортировать)
+- Daily summary (нужно определить что "суммировать")
+- Автоматическая классификация (какая информация куда идёт)
+
+**Что нужно для полной автоматизации:**
+- Bot разрешения на Discord (есть админ, но можно ограничить)
+- Cron scheduler (есть в OpenClaw, нужно настроить)
+- API для интеграции (есть Discord API, нужен механизм для KB экспорта)
+- Правила (нужны чёткие правила что когда происходит)
+
+**Практично сейчас:**
+- Ручное: я выносу выводы в KB (быстро, 5-10 минут за задачу)
+- Полу-авто: файл-ватчер напоминает если что-то не закоммичено
+- Авто: git commits (я нажимаю, git историю ведёт сам)
+
+---
+
+## ✅ Итого
+
+**Сегодня создали:**
+1. Knowledge Base (структура + первые документы + git)
+2. Discord структура (чистая, организованная, готовая)
+3. Архитектуру памяти (визуальная схема + текстовый порядок)
+
+**Сейчас готовы:**
+- Вы видите визуальную схему и порядок работы
+- Можете дать OK или попросить правки
+- Я готов к Фазе 4 (VSC интеграция)
+
+**Риски / неясности:**
+- Approval timeout для git операций (слишком много запросов, нужен полный доступ или allow-always)
+- Сложность с плотной синхронизацией между системами (нужен батched подход)
+
+**Следующий шаг за вами:**
+- Посмотрите `memory-schema.puml` (откройте в VSC с расширением PlantUML)
+- Посмотрите `workflow.md` (читается в текстовом редакторе)
+- Скажите OK или что менять
+
+---
+
+_Система в процессе. История ведётся в git. Готов к следующей фазе._ 🦊⚡

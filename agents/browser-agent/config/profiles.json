@@ -1,0 +1,28 @@
+{
+  "profiles": [
+    {
+      "id": "google-main",
+      "title": "Google Main",
+      "purpose": "Основной Google-профиль",
+      "startUrl": "https://www.google.com",
+      "controlPort": 9333,
+      "status": "planned"
+    },
+    {
+      "id": "bituah",
+      "title": "Bituah Leumi",
+      "purpose": "Профиль для Битуах Леуми и связанных гос-сервисов",
+      "startUrl": "https://www.btl.gov.il",
+      "controlPort": 9334,
+      "status": "planned"
+    },
+    {
+      "id": "test",
+      "title": "Test",
+      "purpose": "Тестовый профиль для экспериментов",
+      "startUrl": "https://example.com",
+      "controlPort": 9335,
+      "status": "planned"
+    }
+  ]
+}

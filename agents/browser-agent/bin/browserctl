@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -euo pipefail
+exec /home/domk/.openclaw/workspace/.venv/bin/python /home/domk/.openclaw/workspace/agents/browser-agent/scripts/browser_control.py "$@"

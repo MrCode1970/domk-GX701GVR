@@ -1,0 +1,133 @@
+@startuml bitua-leumi-flow
+!theme plain
+skinparam backgroundColor #f8f8f8
+skinparam defaultTextAlignment center
+
+title Маршрут халата в Битуах Леуми\nСценарий: Наёмный, контракт активен
+
+actor User as "Ты"
+participant Employer as "Работодатель"
+participant BTL as "Битуах Леуми\n(БЛ)"
+participant Taasuka as "Служба\nзанятости"
+participant Bank as "Твой банк"
+
+== День 1: Подготовка ==
+
+User -> Employer: Попросить документы\n(טופס 100 + письмо про חל״ט)
+activate Employer
+Employer --> User: Выдал документы
+deactivate Employer
+
+note right of User
+  Документы:
+  - טופס 100 (агрегирование данных)
+  - Письмо: חל״ט с 01.03.2026
+  - Остаток отпускных
+end note
+
+== День 1-2: Регистрация и подача ==
+
+User -> BTL: 1️⃣ Открыть личный кабинет\n(bitua.gov.il)
+activate BTL
+note right of BTL
+  Вариант A: gov.il ID (быстро)
+  Вариант B: ID + пароль БЛ (если уже регистрировался)
+  Вариант C: Отделение (офлайн)
+end note
+BTL --> User: ЛК открыт
+
+User -> BTL: 2️⃣ Подать заявление\nна דמי אבטלה (пособие)
+note right of User
+  Заполнить форму:
+  - Дата: 01.03.2026
+  - Работодатель: имя, ID
+  - Причина: война / חל״ט
+  - Реквизиты банка
+  Приложить: טופס 100 + письмо
+end note
+BTL --> User: ✅ Заявление принято\n(номер: #123456)
+
+deactivate BTL
+
+note over User, BTL
+  ⚠️ СОХРАНИ НОМЕР ЗАЯВЛЕНИЯ!
+end note
+
+== День 2-3: Регистрация в Taasuka ==
+
+User -> Taasuka: 3️⃣ Зарегистрироваться\n(taasuka.gov.il)
+activate Taasuka
+note right of Taasuka
+  Раздел: "הרשמת מובטל"
+  (Регистрация безработного)
+end note
+Taasuka --> User: 📅 Забронирована дата явки
+
+== День 5-10: Явка в Taasuka ==
+
+User -> Taasuka: 4️⃣ Явиться в отделение\n(с ID + документами БЛ)
+activate Taasuka
+note right of Taasuka
+  Время: 5-10 минут
+  Выдам: справку о регистрации
+  (תעודת הרשמה)
+end note
+Taasuka --> User: ✅ Зарегистрирован
+
+deactivate Taasuka
+
+User -> BTL: Дать БЛ справку\n(или она синхронизируется онлайн)
+activate BTL
+note right of BTL
+  БЛ проверит:
+  ✓ Регистрация в Taasuka
+  ✓ Документы от работодателя
+  ✓ Период страхования
+  ✓ Взносы
+end note
+BTL --> User: ✅ Все проверено
+
+== День 20-30: Выплата ==
+
+BTL -> Bank: Перевод пособия
+activate Bank
+Bank --> User: 💰 Деньги на счёте
+deactivate Bank
+
+note right of Bank
+  Сумма зависит от:
+  - Зарплаты за 6 месяцев до 01.03
+  - Дневной тариф (обновляется 01.01)
+  - Периода חל״ט
+end note
+
+== Ежемесячно ==
+
+User -> Taasuka: Явиться и отметиться\n(или онлайн)
+activate Taasuka
+Taasuka --> User: ✅ Отметился
+note right of Taasuka
+  Частота: 1-2 раза в месяц
+  Обязательно! Без этого выплаты прекратятся
+end note
+deactivate Taasuka
+
+BTL -> Bank: Продолжить выплаты пособия
+Bank --> User: 💰 Очередное пособие
+
+...
+
+== Сроки ==
+
+note over User, Bank
+  ⏱️ КРИТИЧНЫЕ ДАТЫ:
+
+  ✓ Подать в БЛ: сейчас (до 01.03.2027)
+  ✓ Явиться в Taasuka: в течение 12 месяцев
+  ✓ Первая выплата: 20-30 дней после подачи
+  ✓ Ежемесячная явка: обязательна для продолжения
+
+  ⚠️ Без регистрации в Taasuka = нет выплат!
+end note
+
+@enduml

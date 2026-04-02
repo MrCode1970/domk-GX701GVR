@@ -1,0 +1,141 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+WORKSPACE="/home/domk/.openclaw/workspace"
+PYTHON_BIN="$WORKSPACE/.venv/bin/python"
+LAUNCHER="$WORKSPACE/agents/browser-agent/scripts/launch_profile.py"
+CONTROL="$WORKSPACE/agents/browser-agent/scripts/browser_control.py"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  fox-browser launch <profile-id> [launcher options]
+  fox-browser state <profile-id>
+  fox-browser open-url <profile-id> <url> [--timeout-ms N]
+  fox-browser text <profile-id> [--limit N]
+  fox-browser elements <profile-id> [--limit N]
+  fox-browser click <profile-id> (--index N | --selector CSS | --label TEXT | --text TEXT) [--timeout-ms N]
+  fox-browser type <profile-id> (--index N | --selector CSS | --label TEXT | --text TEXT) --value TEXT [--clear] [--timeout-ms N]
+  fox-browser press <profile-id> <key> [--index N | --selector CSS | --label TEXT]
+  fox-browser wait-text <profile-id> <text> [--timeout-ms N]
+  fox-browser back <profile-id>
+  fox-browser forward <profile-id>
+  fox-browser reload <profile-id>
+  fox-browser tabs <profile-id>
+  fox-browser switch-tab <profile-id> (--index N | --tab-id ID)
+
+Examples:
+  fox-browser launch google-main
+  fox-browser launch google-main --start-url https://mail.google.com
+  fox-browser state google-main
+  fox-browser open-url google-main https://mail.google.com
+  fox-browser elements google-main --limit 120
+  fox-browser click google-main --index 35
+  fox-browser type google-main --label "Поиск в почте" --value "anthropic"
+  fox-browser press google-main Enter
+  fox-browser tabs google-main
+  fox-browser switch-tab google-main --index 1
+EOF
+}
+
+require_args() {
+  local min_args="$1"
+  local command_name="$2"
+  shift 2
+  if [ "$#" -lt "$min_args" ]; then
+    echo "fox-browser: not enough arguments for '$command_name'" >&2
+    usage >&2
+    exit 2
+  fi
+}
+
+if [ "$#" -eq 0 ]; then
+  usage
+  exit 0
+fi
+
+subcommand="$1"
+shift
+
+case "$subcommand" in
+  -h|--help|help)
+    usage
+    ;;
+  launch)
+    require_args 1 "launch" "$@"
+    exec "$PYTHON_BIN" "$LAUNCHER" "$@"
+    ;;
+  state)
+    require_args 1 "state" "$@"
+    profile_id="$1"
+    shift
+    exec "$PYTHON_BIN" "$CONTROL" "$profile_id" current_state "$@"
+    ;;
+  open-url)
+    require_args 2 "open-url" "$@"
+    profile_id="$1"
+    shift
+    exec "$PYTHON_BIN" "$CONTROL" "$profile_id" open_url "$@"
+    ;;
+  text)
+    require_args 1 "text" "$@"
+    profile_id="$1"
+    shift
+    exec "$PYTHON_BIN" "$CONTROL" "$profile_id" extract_visible_text "$@"
+    ;;
+  elements)
+    require_args 1 "elements" "$@"
+    profile_id="$1"
+    shift
+    exec "$PYTHON_BIN" "$CONTROL" "$profile_id" get_interactive_elements "$@"
+    ;;
+  click)
+    require_args 1 "click" "$@"
+    profile_id="$1"
+    shift
+    exec "$PYTHON_BIN" "$CONTROL" "$profile_id" click "$@"
+    ;;
+  type)
+    require_args 1 "type" "$@"
+    profile_id="$1"
+    shift
+    exec "$PYTHON_BIN" "$CONTROL" "$profile_id" type "$@"
+    ;;
+  press)
+    require_args 2 "press" "$@"
+    profile_id="$1"
+    key="$2"
+    shift 2
+    exec "$PYTHON_BIN" "$CONTROL" "$profile_id" press "$key" "$@"
+    ;;
+  wait-text)
+    require_args 2 "wait-text" "$@"
+    profile_id="$1"
+    text="$2"
+    shift 2
+    exec "$PYTHON_BIN" "$CONTROL" "$profile_id" wait_for_text "$text" "$@"
+    ;;
+  back|forward|reload)
+    require_args 1 "$subcommand" "$@"
+    profile_id="$1"
+    shift
+    exec "$PYTHON_BIN" "$CONTROL" "$profile_id" "$subcommand" "$@"
+    ;;
+  tabs)
+    require_args 1 "tabs" "$@"
+    profile_id="$1"
+    shift
+    exec "$PYTHON_BIN" "$CONTROL" "$profile_id" list_tabs "$@"
+    ;;
+  switch-tab)
+    require_args 1 "switch-tab" "$@"
+    profile_id="$1"
+    shift
+    exec "$PYTHON_BIN" "$CONTROL" "$profile_id" switch_tab "$@"
+    ;;
+  *)
+    echo "fox-browser: unknown subcommand '$subcommand'" >&2
+    usage >&2
+    exit 2
+    ;;
+esac

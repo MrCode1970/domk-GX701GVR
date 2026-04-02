@@ -1,0 +1,100 @@
+@startuml fox_memory_system
+!theme plain
+skinparam backgroundColor #f8f9fa
+skinparam arrowColor #333333
+skinparam componentBackgroundColor #e1f5ff
+skinparam componentBorderColor #0277bd
+
+title fox — Архитектура памяти и потоков информации
+
+' ВХОДЯЩИЕ ПОТОКИ
+package "📥 ВХОДЫ" #fff3e0 {
+  component "Discord\nОбсуждения & треды" as discord_input
+  component "Опыт работы\nРешения задач" as experience
+  component "Внешний опыт\nФорумы, статьи" as external
+}
+
+' ОБРАБОТКА
+package "⚙️ ОБРАБОТКА" #f3e5f5 {
+  component "Лис\nАнализ & фильтрация" as processor
+  component "Принятие решения\n(важно ли?)" as decision
+}
+
+' ХРАНИЛИЩА
+package "💾 ХРАНИЛИЩА" #e8f5e9 {
+  component "MEMORY.md\n(моя оперативная память)" as memory_now
+  component "memory/YYYY-MM-DD.md\n(дневник, временно)" as memory_daily
+  component "KB: kb/\n(вечная истина, git)" as kb_storage
+  component ".vscode/\n(мой рабочий инструмент)" as vscode_tool
+}
+
+' ВЫХОДЯЩИЕ ПОТОКИ
+package "📤 ВЫХОДЫ" #fce4ec {
+  component "Вам: визуальные схемы\n& документация" as output_you
+  component "Интеграции:\nGit, Discord, API" as integrations
+  component "Автоматизация:\nreminders, exports" as automation
+}
+
+' СВЯЗИ: ВХОДЯЩИЕ → ОБРАБОТКА
+discord_input --> processor: сырые\nданные
+experience --> processor: решённые\nзадачи
+external --> processor: контекст
+
+' СВЯЗИ: ОБРАБОТКА → РЕШЕНИЕ
+processor --> decision: фильтрую\nважность
+
+' СВЯЗИ: РЕШЕНИЕ → ХРАНИЛИЩА
+decision --> memory_daily: все события\n(временно)
+decision --> memory_now: ключевые факты\n(оперативная)
+decision --> kb_storage: решения\n(вечно)
+decision --> vscode_tool: конфиги\n& shortcuts
+
+' СВЯЗИ: ХРАНИЛИЩА → ДРУГ ДРУГА
+memory_daily ..> memory_now: выводы\n(ежедневно)
+memory_daily ..> kb_storage: архив\n(еженедельно)
+kb_storage ..> memory_now: контекст\n(при загрузке)
+
+' СВЯЗИ: ХРАНИЛИЩА → ВЫХОДЫ
+memory_now --> output_you: контекст\nдля ответов
+kb_storage --> output_you: истина\nдокументация
+vscode_tool --> output_you: визуализация\n(диаграммы, схемы)
+
+' СВЯЗИ: ВЫХОДЫ
+output_you --> integrations: информация\nв разные каналы
+integrations --> automation: триггеры\nдля ботов
+automation ..> memory_daily: новые события\nпетля
+
+' ЛЕГЕНДА
+note right of processor
+  **Роль Лиса:**
+  1. Читаю входы
+  2. Фильтрую (что важно?)
+  3. Выбираю хранилище
+  4. Отвечаю вам
+  5. Синхронизирую системы
+end note
+
+note left of memory_now
+  **Режимы памяти:**
+  
+  MEMORY.md
+  = восстановление
+  после перезагрузки
+  
+  memory/YYYY-MM-DD.md
+  = журнал (недельный)
+  
+  kb/
+  = истина (вечно,
+  версионируется)
+end note
+
+note bottom of output_you
+  **Визуализация для вас:**
+  - Диаграммы (.puml)
+  - Markdown схемы
+  - Git history (эволюция)
+  - Статус задач (live)
+end note
+
+@enduml
